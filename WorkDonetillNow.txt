@@ -1,0 +1,2545 @@
+ ▐▛███▛█   Claude Code v2.1.319
+▝▜██████▀  Opus 5.5 · Claude Pro
+ ▝▝   ▝▝   E:\Downloads\Chickpete\ai.jaingenius.org
+
+
+❯ /rename ImplementationPlan 
+  ⎿  Session renamed to: ImplementationPlan
+
+❯ /model                                                                        
+  ⎿  Set model to Opus 5.5 and saved as your default for new sessions
+
+❯ @PRD.md Come up with the implementation plan                                  
+  ⎿  Read PRD.md (557 lines)
+
+● I'll check the folder state first.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The folder holds only PRD.md, and Node 24 / npm 11 / git are installed, so
+  there's nothing to explore. I'll write the plan directly.
+
+● Updated plan
+  ⎿  /plan to preview
+
+● User approved Claude's plan
+  ⎿  Plan saved to: 
+     C:\Users\jhota\.claude\plans\prd-md-come-up-with-eager-bee.md · /plan to 
+     edit
+     Jain AI (ai.jaingenius.org) — Implementation Plan
+
+     Context
+
+     E:\Downloads\Chickpete\ai.jaingenius.org contains only PRD.md (no git, no
+     package files). Tooling present: Node 24.16, npm 11.13, git 2.41. The PRD
+     calls for a new, independent Astro + TypeScript static site, which launches
+     as a content-first resource hub (Phase 1) with no DB, auth or AI APIs, and
+     grows through later phases. The PRD says to work one milestone per
+     session, state files and acceptance criteria at the start of each one, and
+     run type-check, lint and build after every change.
+
+     Defaults assumed (change any before approval):
+     - Build in this folder (ai.jaingenius.org) instead of making a new
+       ai-jaingenius folder. The PRD allows "or equivalent". git init here.
+     - Styling: plain CSS custom properties (design tokens), no Tailwind.
+     - Hosting: Cloudflare Workers Static Assets with a static Astro build
+       (output: 'static', no adapter until Phase 4). Deploy with wrangler deploy
+       using a wrangler.jsonc that sets assets.directory = ./dist and
+       not_found_handling = "404-page".
+     - Content is MDX/Markdown plus a few JSON collections, using Astro Content
+       Layer (src/content.config.ts, glob() loader, Zod schemas).
+     - Initial content is a small seed set of real examples. Anything religious
+       (dates, significance) gets religiousReviewStatus: "pending" and a visible
+       "Pending review" label. Asset licences are never invented: asset records
+       are only added with a known source and licence.
+
+     ---
+
+     Phase 0 — Foundation (1 session)
+
+     M0.1 Scaffold
+     - npm create astro@latest (minimal, TS strict) → astro.config.mjs with
+       site: 'https://ai.jaingenius.org', @astrojs/mdx, @astrojs/sitemap.
+     - Dev deps: prettier, prettier-plugin-astro, eslint + eslint-plugin-astro +
+       typescript-eslint, @astrojs/check, wrangler.
+     - Scripts: dev, build (astro check && astro build && pagefind is added in
+       Phase 1), preview, check, lint, format, deploy.
+     - .gitignore (node_modules, dist, .env*, .wrangler), .env.example
+       (placeholders only), README.md, CLAUDE.md (guardrails taken from PRD
+       §16).
+
+     M0.2 Design system and shell
+     - src/styles/tokens.css (maroon / cream / saffron / gold / charcoal, type
+       scale, spacing, focus ring) and global.css.
+     - src/layouts/BaseLayout.astro, which handles title, description,
+       canonical, OG/Twitter meta, and a skip link.
+     - src/components/: Header.astro (Explore / Learn / About, plus a search
+       entry), MobileNav.astro (works with <details> and no JS), Footer.astro,
+       SEO.astro.
+     - src/pages/index.astro (placeholder intro, no dead links),
+       src/pages/404.astro, public/favicon.svg, public/robots.txt.
+
+     M0.3 Deploy config
+     - wrangler.jsonc for static assets, plus README steps for npx wrangler 
+       login and npm run deploy and for adding the custom domain
+       ai.jaingenius.org.
+
+     Phase 0 acceptance: clean npm ci && npm run dev works, npm run build
+     passes, there are no absolute paths or secrets, and git init is done with a
+     first commit.
+
+     ---
+
+     Phase 1 — Public Resource Hub (MVP, ~8 sessions)
+
+     M1.1 Content schemas and data layer
+     - src/content.config.ts defines collections prompts, templates, assets,
+       tools, festivals, guides, with fields exactly as in PRD §7.1 and status: 
+       draft|published|archived.
+     - src/lib/content.ts is a small read API (getPublished(type), getBySlug,
+       getRelated) that filters status === 'published'. Pages use only this API,
+       so D1 can replace it in Phase 2.
+     - src/lib/format.ts covers dates, file sizes and licence labels. Vitest
+       unit tests go in tests/unit/.
+
+     M1.2 Shared UI components
+     - ResourceCard.astro, Tag.astro, Badge.astro (Prompt / Template / Download
+       / External tool / Pending review), EmptyState.astro, Breadcrumbs.astro,
+       CopyButton (small vanilla <script> that falls back to selectable text; no
+       React unless needed), FilterBar.
+     - Filtering uses static category pages (/prompts/category/[cat]), so it
+       works without JS. A light client-side tag filter adds to it.
+
+     M1.3 Prompt Library: /prompts, /prompts/[slug] with copy, metadata and
+     related prompts. Seed ~10 prompts.
+     M1.4 Templates and Assets: /templates, /templates/[slug], /assets,
+     /assets/[slug]. Format, size, licence and attribution appear before the
+     download button. Preview images go through astro:assets (WebP/AVIF,
+     explicit dimensions, lazy loading).
+     M1.5 AI Tools Directory: /tools, /tools/[slug], showing freePlanStatus, the
+     caveat, "Last verified" and the official link (rel="noopener noreferrer").
+     Seed ~8 tools (ChatGPT, Gemini, Claude, Canva, Ideogram, etc.) with
+     today's verification date.
+     M1.6 Festivals and Learning Centre: /festivals, /festivals/[slug] (date
+     description, sources, last verified, related prompts and templates),
+     /learn, /learn/[slug]. Seed festivals: Mahavir Janma Kalyanak, Paryushan,
+     Das Lakshan, Diwali (Nirvan), Akshaya Tritiya, Samvatsari, all marked
+     pending review.
+     M1.7 Search: Pagefind runs after the build (data-pagefind-body on detail
+     pages, data-pagefind-filter for type and category). /search page plus
+     header search. A <noscript> fallback links to category indexes. Includes a
+     no-results state.
+     M1.8 Static pages, homepage and SEO polish
+     - /about, /guidelines (PRD §7.2), /privacy, /terms, with a takedown/contact
+       email.
+     - Homepage gets the hero and tagline, search, featured categories, and
+       recently added items.
+     - Sitemap, canonical URLs, OG on every detail page, and a broken-link check
+       (astro build combined with a link-check script).
+
+     M1.9 QA gate
+     - Playwright journeys in tests/e2e/: Journeys A, B and D from the PRD,
+       search, 404, mobile viewport, and JS disabled for reading.
+     - @axe-core/playwright accessibility checks and a Lighthouse run on core
+       pages (target 90+).
+     - Religious content and asset permission review checklist recorded in
+       README.
+
+     Phase 1 acceptance: the PRD §5 Phase 1 criteria and §15 release gates.
+
+     ---
+
+     Later phases (planned only after Phase 1 ships; each gets its own detailed 
+     plan)
+
+     - Phase 2, CMS: add @astrojs/cloudflare adapter, D1 (migrations/), R2
+       uploads, Cloudflare Access on /admin/* and /api/admin/* with JWT verified
+       server-side, admin/editor roles, audit log, import/export. Swap the
+       src/lib/content.ts implementation to read from D1.
+     - Phase 3, Builders: /studio/* React islands (Festival Kit, Prompt,
+       Invitation, Caption, Poster Brief). Deterministic template assembly from
+       reviewed JSON templates, with copy / download .md / reset and clear
+       "assembled text, not AI" labels.
+     - Phase 4, Text AI: /api/ai/* Workers behind a generateText / estimateUsage
+       / getProviderStatus adapter, secrets via wrangler secret, Turnstile,
+       D1-backed quotas and rate limits, and a "draft" label on output.
+     - Phase 5, Images: only after cost caps are proven. Phase 6 is optional.
+
+     Verification (each milestone)
+
+     npm run check && npm run lint && npm run build && npm run test (Vitest,
+     later Playwright), then npm run preview and a manual click-through on
+     mobile and desktop widths. Report files changed, results, limitations and
+     the next milestone.
+
+     Next step after approval
+
+     Execute Phase 0 only (M0.1–M0.3), then stop for review.
+
+● Plan approved, so I'm starting Phase 0. First, the current package versions:
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● TypeScript has to stay on 6.0.x because @astrojs/check and typescript-eslint
+  don't support 7 yet. Writing the project config files now.
+
+  Ran 4 shell commands (ctrl+o to expand)
+
+● The audit warnings are all one moderate minimatch advisory inside the dev-only
+  ESLint toolchain. None of it ships to the site, so I'll note it and move on.
+  Next come the config files.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now the design tokens, layout and shell components:
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● The shell rejected that heredoc because of quoting, so nothing was written.
+  I'll write the files with the Write tool instead.
+
+● Write(src\components\SEO.astro)
+  ⎿  Wrote 42 lines to src\components\SEO.astro
+       1 ---
+       2 import { SITE } from '../lib/site';
+       3 
+       4 export interface Props {
+       5   title?: string;
+       6   description?: string;
+       7   /** Path or absolute URL of a social preview image. Omit until
+          a real image exists. */
+       8   image?: string;
+       9   type?: 'website' | 'article';
+     … +33 lines (ctrl+o to expand)
+
+● Write(src\components\Logo.astro)
+  ⎿  Wrote 28 lines to src\components\Logo.astro
+       1 ---
+       2 import { SITE } from '../lib/site';
+       3 ---
+       4 
+       5 <a class="logo" href="/" aria-label={`${SITE.name} ${SITE.endors
+         ement}, home`}>
+       6   <span class="logo__name">{SITE.name}</span>
+       7   <span class="logo__by">{SITE.endorsement}</span>
+       8 </a>
+       9 
+     … +19 lines (ctrl+o to expand)
+
+● Write(src\components\Header.astro)
+  ⎿  Wrote 113 lines to src\components\Header.astro
+       1 ---
+       2 import Logo from './Logo.astro';
+       3 import { NAV } from '../lib/site';
+       4 
+       5 const current = Astro.url.pathname;
+       6 const isCurrent = (href: string) =>
+       7   href === '/' ? current === '/' : current === href || current.s
+         tartsWith(`${href}/`);
+       8 ---
+       9 
+     … +104 lines (ctrl+o to expand)
+
+● Write(src\components\Footer.astro)
+  ⎿  Wrote 44 lines to src\components\Footer.astro
+       1 ---
+       2 import { SITE } from '../lib/site';
+       3 
+       4 const year = new Date().getFullYear();
+       5 ---
+       6 
+       7 <footer class="site-footer">
+       8   <div class="container site-footer__inner">
+       9     <p>
+      10       <strong>{SITE.name}</strong>
+     … +34 lines (ctrl+o to expand)
+
+● Write(src\layouts\BaseLayout.astro)
+  ⎿  Wrote 31 lines to src\layouts\BaseLayout.astro
+       1 ---
+       2 import '../styles/global.css';
+       3 import SEO from '../components/SEO.astro';
+       4 import Header from '../components/Header.astro';
+       5 import Footer from '../components/Footer.astro';
+       6 import type { Props as SEOProps } from '../components/SEO.astro'
+         ;
+       7 
+       8 export type Props = SEOProps;
+       9 
+     … +22 lines (ctrl+o to expand)
+
+● Write(src\pages\index.astro)
+  ⎿  Wrote 123 lines to src\pages\index.astro
+       1 ---
+       2 import BaseLayout from '../layouts/BaseLayout.astro';
+       3 import { SITE } from '../lib/site';
+       4 
+       5 // Sections planned for Phase 1. Shown as "Coming soon" without 
+         links until each page exists.
+       6 const upcoming = [
+       7   {
+       8     title: 'Prompt Library',
+       9     text: 'Ready-to-copy AI prompts for Jain festivals, events a
+     … +115 lines (~3 KB) (ctrl+o to expand)
+
+● Write(src\pages\404.astro)
+  ⎿  Wrote 33 lines to src\pages\404.astro
+       1 ---
+       2 import BaseLayout from '../layouts/BaseLayout.astro';
+       3 ---
+       4 
+       5 <BaseLayout
+       6   title="Page not found"
+       7   description="The page you were looking for could not be found.
+         "
+       8   noindex
+       9 >
+     … +24 lines (ctrl+o to expand)
+
+● Write(public\favicon.svg)  ⎿  Wrote 5 lines to public\favicon.svg
+      1 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+      2   <rect width="64" height="64" rx="14" fill="#7a1f2b"/>
+      3   <text x="32" y="43" text-anchor="middle" font-family="Georgia, 
+        serif" font-size="30" font-weight="700" fill="#fbf6ec">AI</text>
+      4   <rect x="16" y="50" width="32" height="3" rx="1.5" fill="#b8913
+        a"/>
+      5 </svg>
+
+● Write(public\robots.txt)
+  ⎿  Wrote 4 lines to public\robots.txt
+      1 User-agent: *
+      2 Allow: /
+      3 
+      4 Sitemap: https://ai.jaingenius.org/sitemap-index.xml
+
+● Now a build, lint and format check to see where things stand:
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Lint and formatting are clean. Next I'll write the README and the CLAUDE.md
+  guardrails, then check the deploy config with a dry run.
+
+● Write(README.md)
+  ⎿  Wrote 97 lines to README.md
+      1 # Jain AI — ai.jaingenius.org
+      2 
+      3 **Jain AI, by Jain Genius.** A free-first digital creativity and 
+        AI resource hub for the Jain
+      4 community: prompts, festival templates, Jain digital assets, AI t
+        ool guides and tutorials.
+      5 
+      6 `PRD.md` is the product source of truth. `CLAUDE.md` holds the ru
+        les for AI coding agents.
+      7 This is an independent project. It does not share code with the m
+     … +91 lines (~4 KB) (ctrl+o to expand)
+
+● Write(CLAUDE.md)
+  ⎿  Wrote 41 lines to CLAUDE.md
+       1 # CLAUDE.md — Jain AI (ai.jaingenius.org)
+       2 
+       3 `PRD.md` is the product source of truth. Read the relevant secti
+         ons before each milestone.
+       4 
+       5 ## Guardrails (from PRD §16)
+       6 
+       7 1. Work only inside this folder. Never touch the main jaingenius
+         .org website repository.
+       8 2. One milestone per session. At the start, state the files expe
+     … +34 lines (~2 KB) (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The dry run reads dist/ correctly. Next I'll test the clean-install acceptance
+  check: a fresh npm ci, then the dev server.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Both pass. Last steps: a fresh build, a scan for local paths or secrets, then
+  git init and the first commit.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Phase 0 is done and all its acceptance checks pass. The project is set up in
+  this folder and committed to a new git repo (bd3a24d on main).
+
+  Plan: saved at C:\Users\jhota\.claude\plans\prd-md-come-up-with-eager-bee.md.
+  Phase 0 is now done. Phase 1 has 9 milestones, one per session: content
+  schemas → shared UI → prompts → templates and assets → AI tools → festivals
+  and learn → search → static pages and SEO → QA. Phases 2–5 are outlined and
+  will each get a detailed plan later.
+
+  What Phase 0 built:
+  - Stack: an Astro 7 site with strict TypeScript, ESLint and Prettier.
+  - Look: maroon, cream, saffron and gold colours with gold kept as an accent
+    only (src/styles/tokens.css).
+  - Shell:
+    - A shared page layout with page titles and social-sharing tags, plus a
+      header and footer.
+    - The mobile menu works without JavaScript.
+    - A 404 page, a sitemap and robots.txt.
+  - Homepage: a placeholder hero with the tagline, and the six upcoming sections
+    marked "Coming soon". The menu is empty for now, and there are no links to
+    unfinished pages, as the PRD requires.
+  - Deploy config: wrangler.jsonc sets up Cloudflare Workers static hosting with
+    the custom 404 page. The README covers npx wrangler login, npm run deploy
+    and adding ai.jaingenius.org as a custom domain.
+  - CLAUDE.md: the PRD's rules for coding agents, condensed.
+
+  Checks run: a clean npm ci worked. npm run build passed with 0 type errors,
+  and lint and formatting are clean. The dev server returns 200 for the homepage
+  and 404 for unknown pages, with the correct page title and canonical link. A
+  Cloudflare deploy dry run read the build output correctly. A scan found no
+  local file paths or secrets in the code.
+
+  Things to know:
+  - I built in this folder (ai.jaingenius.org) rather than making a new
+    ai-jaingenius folder. The PRD allows "or equivalent".
+  - TypeScript is held at 6.0 because two of the dev tools don't support
+    TypeScript 7 yet.
+  - npm audit shows one moderate warning in the code-checking tools. It isn't
+    part of the published site. Both are noted in the README.
+  - Nothing is deployed yet. That needs you to run npx wrangler login with your
+    Cloudflare account, then npm run deploy.
+
+  Next milestone: M1.1, content schemas and the data layer. Let me know when to
+  start it.
+
+✻ Cogitated for 10m 12s · done 8:06 PM
+
+❯ Start                                                                         
+
+● Starting M1.1: content schemas and data layer.
+
+  Files expected to change: src/content.config.ts (new), src/lib/content.ts and
+  src/lib/resources.ts (data layer), src/lib/format.ts, src/content/*/ (a few
+  draft seed entries), tests/unit/*, vitest.config.ts, package.json (add
+  Vitest), README.md and CLAUDE.md.
+
+  Acceptance criteria addressed:
+  - All six content types from PRD §7.1 exist with typed, validated schemas.
+  - Pages read content only through a small API that returns published items
+    only, so the database can replace it in Phase 2.
+  - Unit tests cover the logic.
+
+  First I'll check how this Astro version expects content config:
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Astro 7 uses src/content.config.ts, Zod 4 from astro/zod, and the glob()
+  loader, as planned. Installing Vitest:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now the taxonomy (allowed categories and their labels) and the schemas:
+
+● Write(src\lib\taxonomy.ts)
+  ⎿  Wrote 181 lines to src\lib\taxonomy.ts
+       1 /**
+       2  * Allowed values for categorised content fields, with display l
+         abels.
+       3  * The schemas in src/content.config.ts validate against these l
+         ists, so a typo
+       4  * in a content file fails the build instead of creating a stray
+          category.
+       5  */
+       6 
+       7 export const CONTENT_STATUSES = ['draft', 'published', 'archived
+     … +175 lines (~5 KB) (ctrl+o to expand)
+
+● Next, the publishing rules. I'm keeping them in a plain module so they can be
+  unit-tested without Astro.
+
+● Write(src\lib\publish-rules.ts)
+  ⎿  Wrote 116 lines to src\lib\publish-rules.ts
+       1 /**
+       2  * Rules a content entry must meet before it can be published.
+       3  *
+       4  * Drafts may be incomplete. Once `status: published`, the field
+         s visitors rely on
+       5  * (licence, verification dates, sources) must be present (PRD §
+         7.2, §10.2).
+       6  * Schemas in src/content.config.ts run these checks, so a breac
+         h fails the build.
+       7  */
+     … +109 lines (ctrl+o to expand)
+
+● Write(src\content.config.ts)
+  ⎿  Wrote 186 lines to src\content.config.ts
+       1 /**
+       2  * Content collections (PRD §7.1). Each entry's id is its filena
+         me, used as the URL slug.
+       3  * Markdown body: prompt text (prompts), description/details (ot
+         hers), tutorial (guides).
+       4  */
+       5 import { defineCollection, reference } from 'astro:content';
+       6 import { glob } from 'astro/loaders';
+       7 import { z } from 'astro/zod';
+       8 import {
+     … +178 lines (ctrl+o to expand)
+
+● Now the data layer (plain helper logic, plus a thin Astro wrapper) and the
+  formatters:
+
+● Write(src\lib\resources.ts)
+  ⎿  Wrote 70 lines to src\lib\resources.ts
+       1 /**
+       2  * Plain helpers for filtering, sorting and relating content ent
+         ries.
+       3  * Kept free of astro:content so they can be unit-tested and reu
+         sed when
+       4  * content moves to a database in Phase 2.
+       5  */
+       6 import type { ContentStatus } from './taxonomy';
+       7 
+       8 export interface ResourceData {
+     … +62 lines (ctrl+o to expand)
+
+● Write(src\lib\content.ts)
+  ⎿  Wrote 48 lines to src\lib\content.ts
+      1 /**
+      2  * The only way pages read content. Returns published entries onl
+        y.
+      3  * In Phase 2 this file can switch from local files to D1 without
+         page changes.
+      4  */
+      5 import { getCollection, getEntry, type CollectionEntry } from 'as
+        tro:content';
+      6 import { isPublished, pickRelated, sortNewest, sortResources } fr
+        om './resources';
+     … +42 lines (ctrl+o to expand)
+
+● Write(src\lib\format.ts)
+  ⎿  Wrote 29 lines to src\lib\format.ts
+      1 /** Display formatting helpers. */
+      2 
+      3 const dateFormatter = new Intl.DateTimeFormat('en-IN', {
+      4   day: 'numeric',
+      5   month: 'short',
+      6   year: 'numeric',
+      7   // Content dates are written as plain YYYY-MM-DD, parsed as UTC
+         midnight.
+      8   timeZone: 'UTC',
+      9 });
+     … +20 lines (ctrl+o to expand)
+
+● Now the draft seed entries. They're all draft, so nothing becomes public.
+  Religious items are marked pending review, and no dates or licences are
+  invented:
+
+● Write(src\content\prompts\paryushan-greeting-poster.md)
+  ⎿  Wrote 26 lines to src\content\prompts\paryushan-greeting-poster.md
+       1 ---
+       2 title: Paryushan greeting poster
+       3 summary: An image prompt for a calm, dignified Paryushan greetin
+         g poster with space for "Michhami Dukkadam" and your name.
+       4 category: festival-poster
+       5 tags: [paryushan, forgiveness, greeting, poster, instagram]
+       6 intendedTool: Any image generation tool
+       7 language: [en]
+       8 style: Minimal, serene, traditional accents
+       9 aspectRatio: '4:5'
+     … +17 lines (ctrl+o to expand)
+● Write(src\content\prompts\pathshala-quiz-generator.md)
+  ⎿  Wrote 29 lines to src\content\prompts\pathshala-quiz-generator.md
+       1 ---
+       2 title: Pathshala quiz for children
+       3 summary: A text prompt that drafts a 10-question multiple-choice
+          quiz for Jain pathshala children, ready for a teacher to check.
+       4 category: education
+       5 tags: [pathshala, quiz, children, education]
+       6 intendedTool: Any chat assistant
+       7 language: [en]
+       8 style: Simple, child-friendly
+       9 religiousReviewStatus: pending
+     … +20 lines (ctrl+o to expand)
+
+● Write(src\content\tools\chatgpt.md)
+  ⎿  Wrote 19 lines to src\content\tools\chatgpt.md
+       1 ---
+       2 name: ChatGPT
+       3 description: A general-purpose chat assistant from OpenAI for dr
+         afting text, captions, invitations, quizzes and ideas.
+       4 category: chat-assistant
+       5 provider: OpenAI
+       6 officialUrl: https://chatgpt.com
+       7 useCases:
+       8   - Drafting invitation and greeting text
+       9   - Writing social media captions
+     … +10 lines (ctrl+o to expand)
+
+● Write(src\content\festivals\paryushan.md)
+  ⎿  Wrote 14 lines to src\content\festivals\paryushan.md
+       1 ---
+       2 name: Paryushan Parva
+       3 summary: An annual period of fasting, reflection and forgiveness
+          observed by Shvetambar Jains, ending with Samvatsari.
+       4 traditions: [shvetambar-murtipujak, sthanakvasi, terapanthi]
+       5 dateDescription: Usually falls in the month of Bhadrapada (aroun
+         d August–September). Exact dates vary by tradition and calendar 
+         and have not yet been verified.
+       6 dateSources: []
+       7 relatedPrompts: [paryushan-greeting-poster]
+     … +7 lines (ctrl+o to expand)
+
+● Write(src\content\guides\how-to-use-a-prompt.md)
+  ⎿  Wrote 27 lines to src\content\guides\how-to-use-a-prompt.md
+       1 ---
+       2 title: How to use a prompt from Jain AI
+       3 summary: A step-by-step beginner guide to copying a prompt from 
+         this site and using it in an AI tool.
+       4 topic: getting-started
+       5 difficulty: beginner
+       6 language: en
+       7 tags: [beginner, prompts]
+       8 status: draft
+       9 createdAt: 2026-11-07
+     … +18 lines (ctrl+o to expand)
+
+● I set accountRequired: false for ChatGPT without checking it. I'll make that
+  field optional for drafts and required to publish, so no unverified claim gets
+  in.
+
+● Update(src\content.config.ts)
+  ⎿  Added 1 line, removed 1 line
+      142        useCases: z.array(z.string()).default([]),
+      143        freePlanStatus: z.enum(FREE_PLAN_STATUSES),
+      144        freePlanNotes: z.string().optional(),
+      145 -      accountRequired: z.boolean(),                           
+      145 +      accountRequired: z.boolean().optional(),                
+      146        lastVerifiedAt: z.coerce.date().optional(),
+      147        reviewedBy: z.string().optional(),
+      148      })
+
+● Update(src\lib\publish-rules.ts)
+  ⎿  Added 5 lines, removed 1 line
+       95  }
+       96  
+       97  export interface ToolRuleInput extends Base {
+       98 +  accountRequired?: boolean | undefined;                      
+       99    lastVerifiedAt?: Date | undefined;
+      100    reviewedBy?: string | undefined;
+      101  }
+      102  
+      103  export function toolIssues(d: ToolRuleInput): RuleIssue[] {
+      103 -  return [...baseIssues(d), ...requireFields({ ...d }, ['lastV
+          -erifiedAt', 'reviewedBy'])];                                  
+      104 +  return [                                                    
+      105 +    ...baseIssues(d),                                         
+      106 +    ...requireFields({ ...d }, ['accountRequired', 'lastVerifi
+          +edAt', 'reviewedBy']),                                        
+      107 +  ];                                                          
+      108  }
+      109  
+      110  export interface FestivalRuleInput extends Base {
+
+● Update(src\content\tools\chatgpt.md)
+  ⎿  Removed 1 line
+      10    - Creating quiz questions for teachers to check
+      11  freePlanStatus: unknown
+      12  freePlanNotes: Not yet verified. Check the official site before
+           publishing.
+      13 -accountRequired: false                                         
+      13  tags: [chat, writing]
+      14  status: draft
+      15  createdAt: 2026-11-07
+
+● Now the unit tests and Vitest config:
+
+● Write(vitest.config.ts)
+  ⎿  Wrote 9 lines to vitest.config.ts
+      1 import { defineConfig } from 'vitest/config';
+      2 
+      3 // Unit tests cover plain logic in src/lib that does not import a
+        stro:content.
+      4 export default defineConfig({
+      5   test: {
+      6     include: ['tests/unit/**/*.test.ts'],
+      7     environment: 'node',
+      8   },
+      9 });
+
+● Write(tests\unit\resources.test.ts)
+  ⎿  Wrote 106 lines to tests\unit\resources.test.ts
+       1 import { describe, expect, it } from 'vitest';
+       2 import {
+       3   addedDate,
+       4   displayName,
+       5   isPublished,
+       6   pickRelated,
+       7   relatedScore,
+       8   sortNewest,
+       9   sortResources,
+      10   type ResourceData,
+     … +96 lines (ctrl+o to expand)
+
+● Write(tests\unit\publish-rules.test.ts)
+  ⎿  Wrote 97 lines to tests\unit\publish-rules.test.ts
+      1 import { describe, expect, it } from 'vitest';
+      2 import {
+      3   assetIssues,
+      4   festivalIssues,
+      5   licenceIssues,
+      6   promptIssues,
+      7   templateIssues,
+      8   toolIssues,
+      9 } from '../../src/lib/publish-rules';
+     … +88 lines (ctrl+o to expand)
+
+● Write(tests\unit\format.test.ts)
+  ⎿  Wrote 33 lines to tests\unit\format.test.ts
+      1 import { describe, expect, it } from 'vitest';
+      2 import { formatDate, formatFileSize, isoDate } from '../../src/li
+        b/format';
+      3 
+      4 describe('formatDate', () => {
+      5   it('formats a content date without timezone drift', () => {
+      6     expect(formatDate(new Date('2026-11-07'))).toBe('7 Nov 2026')
+        ;
+      7     expect(formatDate(new Date('2026-01-01'))).toBe('1 Jan 2026')
+        ;
+     … +26 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The build is clean with 26 passing tests; the only warnings are expected
+  notices for templates and assets that get content in M1.4. I'm now checking
+  that the publishing rules actually fail the build, using a temporary bad
+  entry.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The rules work: the build fails with clear messages. Last check is a runtime
+  smoke test of the data layer, using a throwaway page:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The data layer checks out: drafts stay hidden, published entries are found and
+  sorted, and no related entries show up. Next I'm confirming the seed files
+  are back to draft, then running the full check suite.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Everything passes. Updating the README and CLAUDE.md, then committing:
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● Update(README.md)
+  ⎿  Added 1 line, removed 1 line
+      11  | Phase                   | State       |
+      12  | ----------------------- | ----------- |
+      13  | 0 — Project foundation  | Done        |
+      14 -| 1 — Public Resource Hub | Next        |                      
+      14 +| 1 — Public Resource Hub | In progress (M1.1 content schemas d
+         +one) |                                                         
+      15  | 2+ — CMS, builders, AI  | Not started |
+      16  
+      17  ## Requirements
+
+● Update(README.md)
+  ⎿  Added 39 lines, removed 1 line
+      38  | `npm run lint`         | Run ESLint                          
+                        |
+      39  | `npm run format`       | Format all files with Prettier      
+                        |
+      40  | `npm run format:check` | Check formatting without changing fi
+          les           |
+      41 +| `npm run test`         | Run unit tests (Vitest) once        
+         +              |                                                
+      42 +| `npm run test:watch`   | Run unit tests in watch mode        
+         +              |                                                
+      43  | `npm run deploy`       | Build, then deploy to Cloudflare wit
+          h Wrangler    |
+      44  
+      43 -Before every commit, run: `npm run check && npm run lint && npm
+         - run format:check && npm run build`.                           
+      45 +Before every commit, run:                                      
+      46 +`npm run check && npm run lint && npm run format:check && npm t
+         +est && npm run build`.                                         
+      47  
+      48 +## Adding content                                              
+      49 +                                                               
+      50 +Content lives in `src/content/<type>/` as Markdown files. The f
+         +ilename becomes the URL slug,                                  
+      51 +for example `src/content/prompts/paryushan-greeting-poster.md` 
+         +→ `/prompts/paryushan-greeting-poster`.                        
+      52 +Files starting with `_` are ignored.                           
+      53 +                                                               
+      54 +| Folder       | Type                | Markdown body holds     
+         +          |                                                    
+      55 +| ------------ | ------------------- | ------------------------
+         +--------- |                                                    
+      56 +| `prompts/`   | Prompt              | The prompt text visitors
+         + copy     |                                                    
+      57 +| `templates/` | Template            | Extra details and how to
+         + edit     |                                                    
+      58 +| `assets/`    | Digital asset       | Extra details and usage 
+         +notes     |                                                    
+      59 +| `tools/`     | AI tool             | How to get started with 
+         +the tool  |                                                    
+      60 +| `festivals/` | Festival / occasion | Significance and observa
+         +nces      |                                                    
+      61 +| `guides/`    | Learning guide      | The tutorial            
+         +          |                                                    
+      62 +                                                               
+      63 +Fields are defined and validated in `src/content.config.ts`. Al
+         +lowed categories, licences and                                 
+      64 +traditions are in `src/lib/taxonomy.ts`. A bad value fails the 
+         +build.                                                         
+      65 +                                                               
+      66 +**Draft vs published.** New entries default to `status: draft` 
+         +and never appear on the site.                                  
+      67 +Drafts may be incomplete. Setting `status: published` makes the
+         + build check that the entry has                                
+      68 +what visitors rely on (`src/lib/publish-rules.ts`):            
+      69 +                                                               
+      70 +- Every type: `publishedAt`.                                   
+      71 +- Templates: preview image, file format, licence, and a downloa
+         +d link or linked asset.                                        
+      72 +- Assets: file, file type, file size, licence, source and creat
+         +or.                                                            
+      73 +- AI tools: `accountRequired`, `lastVerifiedAt` and `reviewedBy
+         +`.                                                             
+      74 +- Festivals: at least one entry in `dateSources` and `lastDateV
+         +erifiedAt`.                                                    
+      75 +- CC BY / CC BY-SA licences always need an `attribution` line. 
+      76 +                                                               
+      77 +Religious content (prompts, templates, assets, festivals) carri
+         +es `religiousReviewStatus`.                                    
+      78 +Leave it `pending` until a knowledgeable reviewer approves it. 
+      79 +                                                               
+      80 +Pages read content only through `src/lib/content.ts` (`getPubli
+         +shed`, `getBySlug`,                                            
+      81 +`getRelated`, `getRecent`, `getPublishedRefs`), which returns p
+         +ublished entries only.                                         
+      82 +                                                               
+      83  ## Project structure
+      84  
+      85  ```text
+
+● Update(README.md)
+  ⎿  Added 8 lines
+       86  public/              Static files copied as-is (favicon, robot
+           s.txt, small approved assets)
+       87  src/components/      Shared Astro components (React only for i
+           nteractive islands, later)
+       88  src/layouts/         Page layouts (BaseLayout handles SEO meta
+           , header, footer)
+       89 +src/content/         Content entries (Markdown), one folder pe
+          +r type                                                        
+       90 +src/content.config.ts  Content schemas and publish rules wirin
+          +g                                                             
+       91  src/lib/site.ts      Site name, tagline and navigation (add na
+           v items only when pages exist)
+       92 +src/lib/content.ts   Data layer used by pages (published entri
+          +es only)                                                      
+       93 +src/lib/resources.ts Sorting, filtering and "related" logic (p
+          +lain TypeScript, unit-tested)                                 
+       94 +src/lib/publish-rules.ts  What an entry needs before it can be
+          + published                                                    
+       95 +src/lib/taxonomy.ts  Allowed categories, licences, traditions 
+          +and their labels                                              
+       96 +src/lib/format.ts    Date and file-size formatting            
+       97  src/pages/           Routes (file-based)
+       98  src/styles/          Design tokens (tokens.css) and global sty
+           les
+       99 +tests/unit/          Vitest unit tests                        
+      100  astro.config.mjs     Astro config (static output, MDX, sitemap
+           )
+      101  wrangler.jsonc       Cloudflare Workers Static Assets config
+      102  ```
+
+● Update(CLAUDE.md)  ⎿  Added 1 line, removed 1 line
+      18  7. No placeholder buttons or dead links. Add a nav item to `src
+          /lib/site.ts` only once its page
+      19     exists. Label unfinished features "Coming soon" without a li
+          nk.
+      20  8. Core pages must work for reading and navigation without clie
+          nt-side JavaScript.
+      21 -9. After every change, run `npm run check && npm run lint && np
+         -m run format:check && npm run build`                           
+      21 +9. After every change, run `npm run check && npm run lint && np
+         +m run format:check && npm test && npm run build`               
+      22     and fix failures. Do not suppress them. Add tests for non-tr
+          ivial logic.
+      23  10. Report files changed, commands run, results, known limitati
+          ons and the next milestone.
+      24  11. Keep `PRD.md`, `README.md`, schemas and code aligned. If a 
+          requirement changes, propose a
+
+● Update(CLAUDE.md)
+  ⎿  Added 4 lines
+      29  - Astro + TypeScript strict. Static output. React only for inte
+          ractive islands.
+      30  - Styling: CSS custom properties in `src/styles/tokens.css`, co
+          mponent-scoped `<style>`. No
+      31    Tailwind. Gold (`--accent`) is an accent only, never body tex
+          t.
+      32 +- Pages read content only through `src/lib/content.ts` (never `
+         +getCollection` directly), so                                   
+      33 +  Phase 2 can swap the source to D1. Keep logic in `src/lib/res
+         +ources.ts` and unit-test it.                                   
+      34 +- New categories, licences or traditions go in `src/lib/taxonom
+         +y.ts`. Publish requirements go                                 
+      35 +  in `src/lib/publish-rules.ts`, with tests.                   
+      36  - Every page uses `BaseLayout` and passes a unique `title` and 
+          `description`.
+      37  - External links that open a new tab use `rel="noopener norefer
+          rer"` and say so to screen
+      38    readers.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● M1.1 is done and committed (8177be0). All six content types from the PRD now
+  have checked formats, and pages have one place to read content from, which
+  only ever returns published items.
+
+  What was built:
+  - Content formats (src/content.config.ts): prompts, templates, assets, AI
+    tools, festivals and guides, with the fields listed in PRD §7.1. Each item
+    is a Markdown file, and its filename becomes its web address.
+  - Fixed lists (src/lib/taxonomy.ts): the allowed categories, licences,
+    languages and Jain traditions (Shvetambar Murtipujak, Sthanakvasi,
+    Terapanthi, Digambar). A typo in a content file stops the build.
+  - Publishing checks (src/lib/publish-rules.ts): drafts can be unfinished, but
+    status: published makes the build fail if key details are missing:
+    - Assets and templates need a licence and source.
+    - AI tools need a "last verified" date, a reviewer, and whether an account
+      is needed.
+    - Festivals need date sources and a verification date.
+    - CC BY licences always need a credit line.
+
+    Together these make it hard to publish an asset with no licence or an
+    unchecked festival date by accident.
+  - Data layer (src/lib/content.ts): getPublished, getBySlug, getRelated,
+    getRecent and getPublishedRefs. Featured items come first, then the newest.
+    In Phase 2 only this file needs to change to read from a database.
+  - Draft examples: 2 prompts (a Paryushan greeting poster and a pathshala
+    quiz), a ChatGPT profile, a Paryushan festival entry and a beginner guide.
+    All are drafts, so none appear on the site yet. Religious items are marked
+    pending review, and I left out anything I hadn't verified, such as festival
+    dates and ChatGPT's free-plan details.
+
+  Checks: type check had 0 errors, lint and formatting are clean, all 26 unit
+  tests pass, and the build passes. I also tested two things with temporary
+  files, then removed them:
+  - A published tool with missing details made the build fail with a clear
+    message for each missing field.
+  - With the prompts temporarily switched to published, the data layer found and
+    sorted them, and it hides them when they're drafts.
+
+  Limitations:
+  - The build prints "no files found" warnings for templates and assets because
+    those folders are empty. They go away when content is added in M1.4.
+  - Templates and assets will need preview images and files you have rights to.
+    I won't make up licences, so I'll need those from you, or I'll create
+    original artwork for you to approve.
+
+  The README now has an "Adding content" section that explains drafts and
+  publishing for editors.
+
+  Next milestone: M1.2, the shared building blocks every page will use: resource
+  cards, labels such as "Pending review", empty states, breadcrumbs, the copy
+  button and category filters.
+
+✻ Worked for 6m 22s · done 8:13 PM
+
+❯ Move further                                                                  
+
+● Starting M1.2: shared UI components.
+
+  Files expected to change:
+  - New components in src/components/: Badge, TagList, ResourceCard, CardGrid,
+    EmptyState, Breadcrumbs, PageHeader, CategoryFilter, MetaList, CopyButton.
+  - Small additions to src/styles/tokens.css and global.css (badge colours, text
+    styles for Markdown content).
+
+  Acceptance criteria addressed (PRD §10.2):
+  - Cards explain what a resource does.
+  - Clear labels: Prompt, Template, Download, External tool, Pending review,
+    AI-generated draft.
+  - The copy button shows a visible success state, works by keyboard, and is
+    announced to screen readers.
+  - No button that does nothing: without JavaScript the copy button stays hidden
+    and the text stays selectable.
+  - Honest empty states, and category filters that work without JavaScript.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(src\styles\tokens.css)
+  ⎿  Added 9 lines
+      30    --border: #e3d6bf;
+      31    --focus: var(--color-saffron-500);
+      32  
+      33 +  /* Status colours (text on its own background meets WCAG AA) 
+         +*/                                                             
+      34 +  --success-bg: #e3f1e4;                                       
+      35 +  --success-text: #1f5a2a;                                     
+      36 +  --warning-bg: #fff1c9;                                       
+      37 +  --warning-text: #5f4200;                                     
+      38 +  --warning-border: #e2c15a;                                   
+      39 +  --info-bg: #f6e3e5;                                          
+      40 +  --info-text: var(--color-maroon-900);                        
+      41 +                                                               
+      42    /* Typography */
+      43    --font-sans:
+      44      system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 
+          'Noto Sans Devanagari',
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now the components:
+
+● Write(src\components\Badge.astro)
+  ⎿  Wrote 83 lines to src\components\Badge.astro
+       1 ---
+       2 /**
+       3  * Short label that says what something is (PRD §10.2): "Prompt"
+         , "Template",
+       4  * "Download", "External tool", "Pending review", "AI-generated 
+         draft".
+       5  */
+       6 export type BadgeVariant =
+       7   | 'prompt'
+       8   | 'template'
+     … +75 lines (ctrl+o to expand)
+
+● Write(src\components\TagList.astro)
+  ⎿  Wrote 32 lines to src\components\TagList.astro
+      1 ---
+      2 /** Plain list of tags. Not linked: there are no tag pages (searc
+        h covers tags). */
+      3 export interface Props {
+      4   tags: readonly string[];
+      5   label?: string;
+      6 }
+      7 
+      8 const { tags, label = 'Tags' } = Astro.props;
+      9 ---
+     … +23 lines (ctrl+o to expand)
+
+● Write(src\components\ResourceCard.astro)
+  ⎿  Wrote 160 lines to src\components\ResourceCard.astro
+       1 ---
+       2 /**
+       3  * Card for any resource in a listing. The title link stretches 
+         over the whole
+       4  * card, so the card is one click target but only one link for s
+         creen readers.
+       5  */
+       6 import type { ImageMetadata } from 'astro';
+       7 import { Image } from 'astro:assets';
+       8 import Badge, { type BadgeVariant } from './Badge.astro';
+     … +152 lines (ctrl+o to expand)
+
+● Write(src\components\CardGrid.astro)
+  ⎿  Wrote 23 lines to src\components\CardGrid.astro
+       1 ---
+       2 /** Responsive grid for ResourceCards. Pass each card in its own
+          <li>. */
+       3 export interface Props {
+       4   label?: string;
+       5 }
+       6 
+       7 const { label } = Astro.props;
+       8 ---
+       9 
+     … +14 lines (ctrl+o to expand)
+
+● Write(src\components\EmptyState.astro)
+  ⎿  Wrote 44 lines to src\components\EmptyState.astro
+       1 ---
+       2 /** Honest message when a list has nothing to show (PRD §10.2). 
+         */
+       3 export interface Props {
+       4   title: string;
+       5   message?: string;
+       6   action?: { href: string; label: string } | undefined;
+       7 }
+       8 
+       9 const { title, message, action } = Astro.props;
+     … +35 lines (ctrl+o to expand)
+
+● Write(src\components\Breadcrumbs.astro)
+  ⎿  Wrote 69 lines to src\components\Breadcrumbs.astro
+       1 ---
+       2 /**
+       3  * Breadcrumb trail with matching BreadcrumbList structured data
+         .
+       4  * "Home" is added automatically. The last item is the current p
+         age.
+       5  */
+       6 import { SITE } from '../lib/site';
+       7 
+       8 export interface Crumb {
+     … +61 lines (ctrl+o to expand)
+
+● Write(src\components\PageHeader.astro)
+  ⎿  Wrote 52 lines to src\components\PageHeader.astro
+       1 ---
+       2 /** Top of a listing or detail page: optional breadcrumbs, eyebr
+         ow, title and intro. */
+       3 import Breadcrumbs, { type Crumb } from './Breadcrumbs.astro';
+       4 
+       5 export interface Props {
+       6   title: string;
+       7   intro?: string | undefined;
+       8   eyebrow?: string | undefined;
+       9   breadcrumbs?: readonly Crumb[] | undefined;
+     … +43 lines (ctrl+o to expand)
+
+● Write(src\components\CategoryFilter.astro)
+  ⎿  Wrote 79 lines to src\components\CategoryFilter.astro
+       1 ---
+       2 /**
+       3  * Category filter as plain links to pre-built category pages, s
+         o filtering
+       4  * works without JavaScript. Pass only categories that have entr
+         ies, so no
+       5  * link leads to an empty page.
+       6  */
+       7 export interface CategoryOption {
+       8   /** URL of the category page. */
+     … +71 lines (ctrl+o to expand)
+
+● Write(src\components\MetaList.astro)
+  ⎿  Wrote 65 lines to src\components\MetaList.astro
+       1 ---
+       2 /** Label/value facts about a resource (format, size, licence, l
+         ast verified...). */
+       3 export interface MetaItem {
+       4   label: string;
+       5   value: string;
+       6   /** Optional link for the value, e.g. licence text. External l
+         inks open in a new tab. */
+       7   href?: string | undefined;
+       8 }
+     … +57 lines (ctrl+o to expand)
+
+● Write(src\components\CopyButton.astro)
+  ⎿  Wrote 92 lines to src\components\CopyButton.astro
+       1 ---
+       2 /**
+       3  * Copies the text of another element (by id) to the clipboard.
+       4  *
+       5  * Without JavaScript the button stays hidden (no button that do
+         es nothing) and
+       6  * the text remains selectable. If the Clipboard API fails, the 
+         text is selected
+       7  * and the visitor is told to press Ctrl+C / Cmd+C.
+       8  */
+     … +84 lines (ctrl+o to expand)
+
+● .button sets display: inline-flex, which would override hidden and show the
+  copy button without JavaScript, so I'm adding a global rule that makes hidden
+  always win.
+
+● Update(src\styles\global.css)
+  ⎿  Added 5 lines
+       6    box-sizing: border-box;
+       7  }
+       8  
+       9 +/* Component display rules must never override the hidden attri
+         +bute. */                                                       
+      10 +[hidden] {                                                     
+      11 +  display: none !important;                                    
+      12 +}                                                              
+      13 +                                                               
+      14  html {
+      15    -webkit-text-size-adjust: 100%;
+      16    text-size-adjust: 100%;
+
+● Write(src\pages\zz-ui.astro)
+  ⎿  Wrote 98 lines to src\pages\zz-ui.astro
+       1 ---
+       2 // TEMPORARY component showcase for M1.2 verification. Delete be
+         fore commit.
+       3 import BaseLayout from '../layouts/BaseLayout.astro';
+       4 import PageHeader from '../components/PageHeader.astro';
+       5 import Badge from '../components/Badge.astro';
+       6 import TagList from '../components/TagList.astro';
+       7 import CardGrid from '../components/CardGrid.astro';
+       8 import ResourceCard from '../components/ResourceCard.astro';
+       9 import EmptyState from '../components/EmptyState.astro';
+     … +89 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The build passes. Taking headless-browser screenshots of the showcase page at
+  desktop and mobile widths, plus one with JavaScript disabled:
+  Read 2 files, ran 1 shell command (ctrl+o to expand)
+
+● The desktop layout looks right, but the footer and filter pills are missing
+  spaces, and the mobile screenshot looks cut off on the right. I'm fixing the
+  spacing first, then measuring the mobile view and retrying the
+  JavaScript-disabled screenshot.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Now measuring for horizontal overflow directly. A temporary script on the
+  showcase page reports the viewport width and the page's scroll width:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Both headless browsers stop at about 500px, so the cut-off screenshot came
+  from that limit rather than the layout. I'm now loading the page in 320px and
+  390px iframes and checking the raw HTML for visitors without JavaScript.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● At 320px and 390px the page is wider than the screen (473px), yet no element's
+  box crosses the edge. That usually means text spilling out of its box. I'll
+  find which elements are doing it:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The overflow comes from the plain <pre> test block on my showcase page, not
+  the real components. I'm adding a global rule so code blocks scroll
+  internally, then re-measuring.
+
+● Update(src\styles\global.css)
+  ⎿  Added 6 lines
+      65    color: var(--brand-strong);
+      66  }
+      67  
+      68 +/* Code blocks scroll inside themselves instead of widening the
+         + page on phones. */                                            
+      69 +pre {                                                          
+      70 +  max-width: 100%;                                             
+      71 +  overflow-x: auto;                                            
+      72 +}                                                              
+      73 +                                                               
+      74  img,
+      75  svg,
+      76  video {
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● Overflow is fixed: 0px extra at both 320px and 390px. But "All(12)" still has
+  no space, so I'll check what HTML the filter actually outputs:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The HTML now has the space, but the pill is a flex container and flex layout
+  drops whitespace between items. Adding a small gap fixes it:
+
+● Update(src\components\CategoryFilter.astro)
+  ⎿  Added 1 line
+      53    .filter a {
+      54      display: inline-flex;
+      55      align-items: center;
+      56 +    gap: 0.35em;                                               
+      57      min-height: 40px;
+      58      padding: var(--space-1) var(--space-4);
+      59      border: 1px solid var(--border);
+
+● Next, an interaction test for the copy button. A script clicks it and records
+  what happens:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The fallback path works, since headless Chrome blocks clipboard access and the
+  visitor is told to press Ctrl+C. The normal "Copied!" path will be covered by
+  the M1.9 Playwright tests, and I'm cleaning up the test files and running the
+  full check suite next.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Prettier reformatted the components. I'll confirm the footer spacing survived:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Spacing is correct. Adding a short component guide to CLAUDE.md, then
+  committing:
+
+● Update(CLAUDE.md)
+  ⎿  Added 4 lines
+      33    Phase 2 can swap the source to D1. Keep logic in `src/lib/res
+          ources.ts` and unit-test it.
+      34  - New categories, licences or traditions go in `src/lib/taxonom
+          y.ts`. Publish requirements go
+      35    in `src/lib/publish-rules.ts`, with tests.
+      36 +- Reuse shared components in `src/components/`: `PageHeader` (w
+         +ith `Breadcrumbs`),                                            
+      37 +  `CardGrid` + `ResourceCard`, `CategoryFilter` (links to pre-b
+         +uilt category pages; pass only                                 
+      38 +  non-empty categories), `EmptyState`, `MetaList`, `Badge`, `Ta
+         +gList`, `CopyButton`.                                          
+      39 +  Interactive bits use small custom elements, hidden until Java
+         +Script runs.                                                   
+      40  - Every page uses `BaseLayout` and passes a unique `title` and 
+          `description`.
+      41  - External links that open a new tab use `rel="noopener norefer
+          rer"` and say so to screen
+      42    readers.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● M1.2 is done and committed (5cf8c1f). The building blocks every page will use
+  now exist and have been checked on desktop, at phone widths and with
+  JavaScript off.
+
+  What was built (in src/components/):
+  - Labels: Prompt, Template, Asset, AI tool, Festival, Guide, Download,
+    External tool ↗, ⚠ Pending review, and AI-generated draft (dashed outline).
+    These cover the labels the PRD asks for.
+  - Resource card: shows the type label, the title, a one-line summary of what
+    the item does, and short facts like category or aspect ratio. It shows a
+    "Pending review" badge for unreviewed religious content. The whole card is
+    clickable, but screen readers hear only one link.
+  - Copy button:
+    - Shows "Copied!" and announces the result to screen readers.
+    - If the browser blocks clipboard access, it selects the text and tells the
+      visitor to press Ctrl+C.
+    - Without JavaScript the button stays hidden and the text stays selectable,
+      so there's no button that does nothing.
+  - Category filter: pill links to separate category pages, so filtering works
+    without JavaScript. It only shows categories that have content.
+  - Also: page header with breadcrumbs (with search-engine breadcrumb data),
+    card grid, empty-state message, a details list for format, size and licence,
+    and a tag list.
+
+  Testing: I built a temporary showcase page and checked it in headless Edge and
+  Chrome, then deleted it. That turned up and fixed three bugs:
+  - Missing spaces in the footer ("Jain AIby Jain Genius") and filter pills
+    ("All(12)").
+  - Wide text blocks could make the page scroll sideways on phones. Measured at
+    320px and 390px, there is now no sideways overflow.
+  - The copy button could have shown up without JavaScript, because a button
+    style overrode the hidden attribute. A global rule now keeps hidden things
+    hidden.
+
+  Type check had 0 errors, lint and formatting are clean, all 26 tests pass, and
+  the build passes.
+
+  Limitations:
+  - The normal "Copied!" path needs a real browser with clipboard permission.
+    Headless browsers block the clipboard, so only the fallback path was tested
+    here. The M1.9 Playwright tests will cover it.
+  - None of these components appear on the live homepage yet. The first page to
+    use them is the Prompt Library.
+
+  Next milestone: M1.3, the Prompt Library (/prompts, category pages and prompt
+  detail pages with copy). That's also where the first prompts would go live.
+  The two draft prompts are marked pending religious review, so tell me whether
+  you want to review them, or whether I should publish them with the visible
+  "Pending review" label.
+
+✻ Crunched for 5m 14s · done 8:19 PM
+
+※ recap: We're building the Jain AI website from the PRD: the foundation, content structure and shared page components are done and committed. Next is the Prompt Library, which needs your call: review the two draft prompts, or publish them marked "Pending review"? (disable recaps in /config)
+
+❯ proceed                                                                       
+
+● Starting M1.3: Prompt Library.
+
+  Files expected to change:
+  - src/pages/prompts/index.astro, src/pages/prompts/category/[category].astro
+    and src/pages/prompts/[slug].astro (new pages).
+  - src/components/ResourceListing.astro (a listing layout I can reuse for
+    templates, assets and tools).
+  - src/lib/cards.ts, src/lib/resources.ts (category counts, with a test) and
+    src/lib/content.ts (a render helper).
+  - src/lib/site.ts (add Prompts to the nav) and the homepage (link the now-open
+    section).
+  - About 10 prompts in src/content/prompts/.
+
+  Acceptance criteria (PRD Phase 1):
+  - A visitor can find, filter, open and copy prompts on mobile and desktop.
+  - Each detail page has its own title, description and canonical link, plus
+    related prompts.
+  - Category pages have an honest empty state.
+  - No dead links, and reading works without JavaScript.
+
+  Your open question: you said "proceed" without choosing, so I'm going with my
+  default. Prompts go live with the visible Pending review label and a notice
+  asking visitors to check religious details. Their religiousReviewStatus stays
+  pending until you approve them, and switching one to approved removes the
+  label.
+
+  First, the data helpers:
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● Now the card mapping, the reusable listing layout and the three prompt pages:
+
+● Write(src\lib\cards.ts)
+  ⎿  Wrote 24 lines to src\lib\cards.ts
+       1 /** Maps content entries to ResourceCard props, so every listing
+          shows them the same way. */
+       2 import type { Props as CardProps } from '../components/ResourceC
+         ard.astro';
+       3 import type { Resource } from './content';
+       4 import { LANGUAGE_LABELS, PROMPT_CATEGORY_LABELS } from './taxon
+         omy';
+       5 
+       6 export const promptPath = (slug: string) => `/prompts/${slug}`;
+       7 export const promptCategoryPath = (category: string) => `/prompt
+     … +18 lines (ctrl+o to expand)
+
+● Write(src\components\ResourceListing.astro)
+  ⎿  Wrote 63 lines to src\components\ResourceListing.astro
+      1 ---
+      2 /**
+      3  * A catalogue page body: optional category filter, a grid of car
+        ds, or an
+      4  * honest empty state. Used by prompts, templates, assets and too
+        ls listings.
+      5  */
+      6 import CardGrid from './CardGrid.astro';
+      7 import ResourceCard, { type Props as CardProps } from './Resource
+        Card.astro';
+     … +56 lines (ctrl+o to expand)
+
+● Write(src\pages\prompts\index.astro)  ⎿  Wrote 37 lines to src\pages\prompts\index.astro
+       1 ---
+       2 import BaseLayout from '../../layouts/BaseLayout.astro';
+       3 import PageHeader from '../../components/PageHeader.astro';
+       4 import ResourceListing from '../../components/ResourceListing.as
+         tro';
+       5 import { getPublished } from '../../lib/content';
+       6 import { countByCategory } from '../../lib/resources';
+       7 import { promptCard, promptCategoryPath } from '../../lib/cards'
+         ;
+       8 import { PROMPT_CATEGORIES, PROMPT_CATEGORY_LABELS } from '../..
+     … +30 lines (~1 KB) (ctrl+o to expand)
+
+● Write(src\pages\prompts\category\[category].astro)
+  ⎿  Wrote 57 lines to src\pages\prompts\category\[category].astro
+       1 ---
+       2 import type { GetStaticPaths } from 'astro';
+       3 import BaseLayout from '../../../layouts/BaseLayout.astro';
+       4 import PageHeader from '../../../components/PageHeader.astro';
+       5 import ResourceListing from '../../../components/ResourceListing
+         .astro';
+       6 import { getPublished } from '../../../lib/content';
+       7 import { countByCategory } from '../../../lib/resources';
+       8 import { promptCard, promptCategoryPath } from '../../../lib/car
+         ds';
+     … +49 lines (ctrl+o to expand)
+
+● Now the prompt detail page and a small reusable notice component for the
+  review warning:
+
+● Write(src\components\Notice.astro)
+  ⎿  Wrote 38 lines to src\components\Notice.astro
+      1 ---
+      2 /** Highlighted note, e.g. "not yet reviewed" or "check before sh
+        aring". */
+      3 export interface Props {
+      4   variant?: 'warning' | 'info';
+      5   title?: string;
+      6 }
+      7 
+      8 const { variant = 'info', title } = Astro.props;
+      9 ---
+     … +29 lines (ctrl+o to expand)
+
+● Write(src\pages\prompts\[slug].astro)
+  ⎿  Wrote 183 lines to src\pages\prompts\[slug].astro
+       1 ---
+       2 import type { GetStaticPaths } from 'astro';
+       3 import BaseLayout from '../../layouts/BaseLayout.astro';
+       4 import PageHeader from '../../components/PageHeader.astro';
+       5 import Badge from '../../components/Badge.astro';
+       6 import CopyButton from '../../components/CopyButton.astro';
+       7 import MetaList from '../../components/MetaList.astro';
+       8 import TagList from '../../components/TagList.astro';
+       9 import Notice from '../../components/Notice.astro';
+      10 import CardGrid from '../../components/CardGrid.astro';
+     … +173 lines (ctrl+o to expand)
+
+● I'll simplify one step: lowercasing the tool name would turn "ChatGPT" into
+  "chatgpt". The "Works with" detail already names the tool.
+
+● Update(src\pages\prompts\[slug].astro)
+  ⎿  Added 2 lines, removed 2 lines
+      74        <ol class="steps">
+      75          <li>Press <strong>Copy prompt</strong>, or select the t
+          ext above and copy it.</li>
+      76          <li>
+      77 -          Open {d.intendedTool ? d.intendedTool.toLowerCase() :
+         - 'your AI tool'} and paste the prompt                          
+      78 -          into the message box.                                
+      77 +          Open your AI tool{d.intendedTool && ` (${d.intendedTo
+         +ol})`} and paste the prompt into the                           
+      78 +          message box.                                         
+      79          </li>
+      80          <li>Replace anything in [SQUARE BRACKETS] with your own
+           details.</li>
+      81          <li>Send it, then check the result carefully before sha
+          ring.</li>
+
+● Next, the nav entry and the homepage link:
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● I'll remove the !important shortcut and order the CSS rules properly instead:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I'm publishing the two existing drafts and writing eight more prompts, each
+  avoiding invented facts, barring depictions of Tirthankaras or deities, and
+  using [BRACKETS] for missing details.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(src\content\prompts\mahavir-janma-kalyanak-poster.md)
+  ⎿  Wrote 27 lines to src\content\prompts\mahavir-janma-kalyanak-poster.md
+       1 ---
+       2 title: Mahavir Janma Kalyanak celebration poster
+       3 summary: An image prompt for a festive, respectful Mahavir Janma
+          Kalyanak poster that leaves space for an approved image and eve
+         nt details.
+       4 category: festival-poster
+       5 tags: [mahavir-janma-kalyanak, mahavir-jayanti, poster, celebrat
+         ion]
+       6 intendedTool: Any image generation tool
+       7 language: [en]
+     … +20 lines (ctrl+o to expand)
+
+● Write(src\content\prompts\diwali-nirvan-greetings.md)
+  ⎿  Wrote 26 lines to src\content\prompts\diwali-nirvan-greetings.md
+       1 ---
+       2 title: Jain Diwali greeting messages
+       3 summary: A text prompt that writes short Jain Diwali greetings r
+         emembering Bhagwan Mahavir's Nirvan, ready for WhatsApp or cards
+         .
+       4 category: greeting
+       5 tags: [diwali, nirvan, greeting, whatsapp]
+       6 intendedTool: Any chat assistant
+       7 language: [en, hi, gu]
+       8 style: Warm, respectful, short
+     … +18 lines (ctrl+o to expand)
+
+● Write(src\content\prompts\temple-event-invitation.md)
+  ⎿  Wrote 37 lines to src\content\prompts\temple-event-invitation.md
+       1 ---
+       2 title: Temple or sangh event invitation
+       3 summary: A text prompt that drafts a clear, polite invitation fo
+         r a temple or sangh event, with all the details guests need.
+       4 category: invitation
+       5 tags: [invitation, temple, sangh, event]
+       6 intendedTool: Any chat assistant
+       7 language: [en, hi, gu]
+       8 style: Formal, warm, clear
+       9 religiousReviewStatus: pending
+     … +28 lines (ctrl+o to expand)
+
+● Write(src\content\prompts\paryushan-social-captions.md)
+  ⎿  Wrote 30 lines to src\content\prompts\paryushan-social-captions.md
+       1 ---
+       2 title: Paryushan social media captions
+       3 summary: A text prompt that writes a set of Instagram and Facebo
+         ok captions for each day of Paryushan, with suggested hashtags.
+       4 category: social-media
+       5 tags: [paryushan, forgiveness, instagram, captions]
+       6 intendedTool: Any chat assistant
+       7 language: [en]
+       8 style: Reflective, simple, positive
+       9 religiousReviewStatus: pending
+     … +21 lines (ctrl+o to expand)
+
+● Write(src\content\prompts\ahimsa-reel-script.md)
+  ⎿  Wrote 30 lines to src\content\prompts\ahimsa-reel-script.md
+       1 ---
+       2 title: Ahimsa in daily life reel script
+       3 summary: A text prompt that writes a 30–60 second Instagram reel
+          script showing simple ways to practise ahimsa every day.
+       4 category: video
+       5 tags: [ahimsa, reel, instagram, youth]
+       6 intendedTool: Any chat assistant
+       7 language: [en]
+       8 style: Light, practical, youth-friendly
+       9 aspectRatio: '9:16'
+     … +21 lines (ctrl+o to expand)
+
+● Write(src\content\prompts\explain-jain-concept-for-children.md)
+  ⎿  Wrote 29 lines to
+     src\content\prompts\explain-jain-concept-for-children.md
+       1 ---
+       2 title: Explain a Jain concept to children
+       3 summary: A text prompt that explains a Jain idea, such as anekan
+         tavada or aparigraha, to children with a simple story and exampl
+         es.
+       4 category: education
+       5 tags: [pathshala, children, education, storytelling]
+       6 intendedTool: Any chat assistant
+       7 language: [en, hi, gu]
+       8 style: Simple, friendly, story-based
+     … +21 lines (ctrl+o to expand)
+
+● Write(src\content\prompts\youth-talk-slide-outline.md)
+  ⎿  Wrote 32 lines to src\content\prompts\youth-talk-slide-outline.md
+       1 ---
+       2 title: Youth talk slide outline
+       3 summary: A text prompt that plans a 10–15 slide presentation for
+          a Jain youth group talk, with speaker notes and visual ideas.
+       4 category: presentation
+       5 tags: [presentation, youth, talk, slides]
+       6 intendedTool: Any chat assistant
+       7 language: [en]
+       8 style: Clear, engaging, modern
+       9 aspectRatio: '16:9'
+     … +23 lines (ctrl+o to expand)
+
+● Write(src\content\prompts\jain-recipe-card-post.md)
+  ⎿  Wrote 27 lines to src\content\prompts\jain-recipe-card-post.md
+       1 ---
+       2 title: Jain recipe card for social media
+       3 summary: An image prompt for an appetising recipe card post for 
+         a Jain dish, with space to add the recipe name and ingredients.
+       4 category: social-media
+       5 tags: [jain-food, recipe, instagram, poster]
+       6 intendedTool: Any image generation tool
+       7 language: [en]
+       8 style: Bright, clean, food photography
+       9 aspectRatio: '4:5'
+     … +18 lines (ctrl+o to expand)
+
+● Building and running all checks:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Four type errors. Three are because MetaList didn't accept an empty string
+  from d.style && …, and I'll widen its type. The fourth needs the full message:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● getRelated returns a mix of content types because TypeScript can't infer the
+  type from the entry alone, so I'm making the caller pass it explicitly, as the
+  other helpers do.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The build produced 10 prompt pages and 7 category pages. Next, a scan of every
+  internal link in the built site to confirm none are broken:
+  Ran 1 shell command (ctrl+o to expand)
+
+● Next, screenshots of the listing and a detail page, and the phone-width
+  overflow test on the real pages:
+
+  Read 3 files, ran 1 shell command (ctrl+o to expand)
+
+● Three small fixes are queued for the pages: dropping the awkward "Not needed."
+  from the Paryushan tip, removing the bracketed note from the "Open your AI
+  tool" line, and moving the stray "·" to the end of each wrapped card fact.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now a click test of the copy button on a real prompt page, plus a check of the
+  page's search and social tags:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The copy button keeps line breaks and each page has its own title and
+  canonical link, but canonical links end in a slash while internal links don't,
+  which would cause redirects on Cloudflare. I'm making all URLs slash-free
+  next.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● With file output, Astro.url.pathname now keeps .html, which breaks canonical
+  links and the nav highlight. I'm adding one helper that cleans paths and using
+  it wherever a page's path is read.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● 35 tests pass; I'm rebuilding to check the canonical and internal links, then
+  running wrangler dev to confirm clean URLs work without redirects and unknown
+  pages return a 404.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● The local Cloudflare server passes all checks: clean URLs return 200, old
+  .html and trailing-slash forms redirect, and unknown pages return a real 404.
+  I'm stopping the server and running the final checks next.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● M1.3 is done and committed (833f202). The Prompt Library is live in the local
+  build: 10 prompts in 7 categories, each with its own page and a copy button.
+  "Prompts" is now in the header, and the homepage links to it.
+
+  What visitors get:
+  - /prompts: all 10 prompts, with category filters that work without
+    JavaScript. Featured prompts come first.
+  - /prompts/category/…: one page per category that has prompts, so no filter
+    leads to an empty page.
+  - Each prompt page:
+    - The prompt text with a Copy prompt button.
+    - Four simple "How to use it" steps and tips where relevant.
+    - Details (category, works with, language, style, aspect ratio, date added)
+      and tags.
+    - Up to 3 related prompts.
+    - Its own title, description and canonical link.
+
+  The 10 prompts cover:
+  - Paryushan: a poster and daily social captions.
+  - Mahavir Janma Kalyanak: a poster.
+  - Jain Diwali (Nirvan) greetings.
+  - Temple or sangh event invitations.
+  - An ahimsa reel script for Instagram.
+  - A Jain recipe card post.
+  - A pathshala quiz.
+  - Explaining a Jain concept to children.
+  - A youth talk slide outline.
+
+  All of them tell the AI tool not to draw Tirthankaras or deities and not to
+  invent scripture or quotations, and they use [BRACKETS] for details to fill
+  in.
+
+  Please review these. Every prompt shows ⚠ Pending review and a "Not yet
+  reviewed" notice. To approve one, set religiousReviewStatus: approved in its
+  file under src/content/prompts/, and the label disappears.
+
+  One change beyond the plan: URLs no longer end in a slash
+  (/prompts/temple-event-invitation). Before, page addresses and links didn't
+  match, which would have caused a redirect on every click on Cloudflare. I
+  tested this with Cloudflare's local server:
+  - Clean URLs load directly.
+  - .html and trailing-slash versions redirect to the clean URL.
+  - Unknown pages return a real 404.
+
+  Checks:
+  - Type check had 0 errors, lint and formatting are clean, all 35 tests pass,
+    and 20 pages build.
+  - A scan of all 298 internal links found none broken.
+  - Six key pages have no sideways scrolling at 320px or 390px.
+  - The copy button copies the full prompt with its line breaks.
+  - From the screenshots I fixed three small things: an awkward tip, a clumsy
+    "how to use" step, and stray "·" separators when card details wrapped.
+
+  Next milestone: M1.4, templates and assets. This one needs input from you.
+  Every downloadable file must have a known licence, and I won't make licences
+  up. Do you have Jain Genius posters, invitations or graphics you can share,
+  with permission to publish? If not, I can create simple original designs
+  (borders, backgrounds, blank poster layouts) for you to approve and license.
+
+✻ Sautéed for 10m 0s · done 8:51 PM
+
+❯ proceed!                                                                      
+
+● Proceeding with M1.4: Templates and Asset Library. Since there are no existing
+  files, I'll create simple original designs. I'll avoid Jain religious symbols
+  and figures entirely (PRD §10.1: no unofficial marks), and use only lotus,
+  lamp, border and pattern motifs.
+
+  Files expected to change:
+  - New pages: src/pages/templates/ and src/pages/assets/ (listing, category and
+    detail pages).
+  - New: src/components/DownloadPanel.astro and src/lib/files.ts (checks each
+    download file exists and reads its real size).
+  - Updates: cards.ts, taxonomy.ts (licence explanations), publish-rules.ts,
+    ResourceCard (previews show whole, not cropped), nav and homepage.
+  - Design files: SVGs in public/downloads/, PNG previews in
+    src/assets/previews/, plus content entries.
+
+  Acceptance criteria:
+  - A visitor can preview and download templates and assets.
+  - Format, file size, licence and attribution show before the download button.
+  - A missing download file fails the build, so no broken download links.
+  - Previews are optimised (WebP, fixed dimensions, lazy loading).
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I'm rendering PNG previews from the SVG designs with sharp, which Astro
+  already installs, using a one-off generator in the scratchpad, and I'll check
+  each output before using it.
+
+  Made 1 scratchpad edit +168 (ctrl+o to expand)
+
+● Write(scripts\render-previews.mjs)
+  ⎿  Wrote 28 lines to scripts\render-previews.mjs
+       1 /**
+       2  * Renders PNG previews for downloadable SVG files.
+       3  *   public/downloads/<name>.svg → src/assets/previews/<name>.pn
+         g
+       4  *
+       5  * Run after adding or changing a design: `npm run previews`.
+       6  * Astro then optimises the PNGs (WebP, responsive sizes) at bui
+         ld time.
+       7  */
+       8 import { readdirSync, mkdirSync } from 'node:fs';
+     … +20 lines (ctrl+o to expand)
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● The four templates and five assets came out well, with no figures or religious
+  symbols. I'm writing the download-file checker and its test next.
+
+● Write(src\lib\files.ts)
+  ⎿  Wrote 32 lines to src\lib\files.ts
+       1 /**
+       2  * Download file checks, run at build time.
+       3  * A local download that does not exist fails the build, so the 
+         site never
+       4  * ships a broken download link. File size is read from the file
+          itself.
+       5  */
+       6 import { existsSync, statSync } from 'node:fs';
+       7 import { basename, join } from 'node:path';
+       8 
+     … +24 lines (ctrl+o to expand)
+
+● Write(tests\unit\files.test.ts)
+  ⎿  Wrote 42 lines to tests\unit\files.test.ts
+       1 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'n
+         ode:fs';
+       2 import { tmpdir } from 'node:os';
+       3 import { join } from 'node:path';
+       4 import { afterAll, describe, expect, it } from 'vitest';
+       5 import { resolveDownload } from '../../src/lib/files';
+       6 
+       7 const publicDir = mkdtempSync(join(tmpdir(), 'jain-ai-files-'));
+       8 mkdirSync(join(publicDir, 'downloads'));
+       9 writeFileSync(join(publicDir, 'downloads', 'lotus icon.svg'), 'x
+     … +34 lines (~1 KB) (ctrl+o to expand)
+
+● Next, the publishing rules. File size now comes from the file itself, so
+  editors don't type it. And any preview image must have alt text.
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● All 41 tests pass. Next, the schema field, licence explanations and card
+  helpers:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(src\lib\cards.ts)
+  ⎿  Added 65 lines, removed 2 lines
+       1 -/** Maps content entries to ResourceCard props, so every listin
+         -g shows them the same way. */                                  
+       1 +/** Maps content entries to ResourceCard props and listing filt
+         +ers, so every list looks alike. */                             
+       2  import type { Props as CardProps } from '../components/Resource
+          Card.astro';
+       3 +import type { CategoryOption } from '../components/CategoryFilt
+         +er.astro';                                                     
+       4  import type { Resource } from './content';
+       4 -import { LANGUAGE_LABELS, PROMPT_CATEGORY_LABELS } from './taxo
+         -nomy';                                                         
+       5 +import { countByCategory } from './resources';                 
+       6 +import {                                                       
+       7 +  ASSET_CATEGORY_LABELS,                                       
+       8 +  FILE_TYPE_LABELS,                                            
+       9 +  LANGUAGE_LABELS,                                             
+      10 +  PROMPT_CATEGORY_LABELS,                                      
+      11 +  TEMPLATE_CATEGORY_LABELS,                                    
+      12 +} from './taxonomy';                                           
+      13  
+      14  export const promptPath = (slug: string) => `/prompts/${slug}`;
+      15  export const promptCategoryPath = (category: string) => `/promp
+          ts/category/${category}`;
+      16 +export const templatePath = (slug: string) => `/templates/${slu
+         +g}`;                                                           
+      17 +export const templateCategoryPath = (category: string) => `/tem
+         +plates/category/${category}`;                                  
+      18 +export const assetPath = (slug: string) => `/assets/${slug}`;  
+      19 +export const assetCategoryPath = (category: string) => `/assets
+         +/category/${category}`;                                        
+      20  
+      21 +/** Filter options for the categories that have entries, in tax
+         +onomy order. */                                                
+      22 +export function categoryOptions<C extends string>(             
+      23 +  entries: readonly { data: { category?: string } }[],         
+      24 +  categories: readonly C[],                                    
+      25 +  labels: Record<C, string>,                                   
+      26 +  path: (category: C) => string,                               
+      27 +): CategoryOption[] {                                          
+      28 +  return countByCategory(entries, categories).map(({ category, 
+         +count }) => ({                                                 
+      29 +    href: path(category),                                      
+      30 +    label: labels[category],                                   
+      31 +    count,                                                     
+      32 +  }));                                                         
+      33 +}                                                              
+      34 +                                                               
+      35 +const formatLabel = (formats: readonly (keyof typeof FILE_TYPE_
+         +LABELS)[]) =>                                                  
+      36 +  formats.map((f) => f.toUpperCase()).join(', ');              
+      37 +                                                               
+      38  export function promptCard(entry: Resource<'prompts'>): CardPro
+          ps {
+      39    const d = entry.data;
+      40    return {
+     ...
+      51      ].filter((m): m is string => Boolean(m)),
+      52    };
+      53  }
+      54 +                                                               
+      55 +export function templateCard(entry: Resource<'templates'>): Car
+         +dProps {                                                       
+      56 +  const d = entry.data;                                        
+      57 +  return {                                                     
+      58 +    href: templatePath(entry.id),                              
+      59 +    title: d.title,                                            
+      60 +    summary: d.description,                                    
+      61 +    typeLabel: 'Template',                                     
+      62 +    typeVariant: 'template',                                   
+      63 +    pendingReview: d.religiousReviewStatus === 'pending',      
+      64 +    image: d.previewImage,                                     
+      65 +    imageAlt: d.previewAlt,                                    
+      66 +    meta: [TEMPLATE_CATEGORY_LABELS[d.category], d.dimensions, 
+         +formatLabel(d.fileFormat)].filter(                             
+      67 +      (m): m is string => Boolean(m),                          
+      68 +    ),                                                         
+      69 +  };                                                           
+      70 +}                                                              
+      71 +                                                               
+      72 +export function assetCard(entry: Resource<'assets'>): CardProps
+         + {                                                             
+      73 +  const d = entry.data;                                        
+      74 +  return {                                                     
+      75 +    href: assetPath(entry.id),                                 
+      76 +    title: d.title,                                            
+      77 +    summary: d.description,                                    
+      78 +    typeLabel: 'Asset',                                        
+      79 +    typeVariant: 'asset',                                      
+      80 +    pendingReview: d.religiousReviewStatus === 'pending',      
+      81 +    image: d.previewImage,                                     
+      82 +    imageAlt: d.previewAlt,                                    
+      83 +    meta: [ASSET_CATEGORY_LABELS[d.category], d.fileType?.toUpp
+         +erCase(), d.dimensions].filter(                                
+      84 +      (m): m is string => Boolean(m),                          
+      85 +    ),                                                         
+      86 +  };                                                           
+      87 +}                                                              
+
+● Now the shared download components. DownloadPanel shows format, size, licence
+  and credit before the button. DownloadDetail is the shared detail-page layout
+  for templates and assets:
+
+● Write(src\components\DownloadPanel.astro)
+  ⎿  Wrote 117 lines to src\components\DownloadPanel.astro
+       1 ---
+       2 /**
+       3  * Everything a visitor should know before downloading (PRD §10.
+         2):
+       4  * format, file size, dimensions, licence, attribution and sourc
+         e, then the button.
+       5  */
+       6 import MetaList from './MetaList.astro';
+       7 import Notice from './Notice.astro';
+       8 import Badge from './Badge.astro';
+     … +109 lines (ctrl+o to expand)
+
+● Write(src\components\DownloadDetail.astro)  ⎿  Wrote 115 lines to src\components\DownloadDetail.astro
+       1 ---
+       2 /**
+       3  * Detail page body for downloadable resources (templates and as
+         sets):
+       4  * large preview and notes on the left, download panel on the ri
+         ght, related items below.
+       5  * The Markdown body goes in the default slot.
+       6  */
+       7 import type { ImageMetadata } from 'astro';
+       8 import { Image } from 'astro:assets';
+     … +107 lines (ctrl+o to expand)
+
+● Card previews should show the whole design rather than a crop:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now the six pages for templates and assets:
+
+● Write(src\pages\templates\index.astro)
+  ⎿  Wrote 37 lines to src\pages\templates\index.astro
+       1 ---
+       2 import BaseLayout from '../../layouts/BaseLayout.astro';
+       3 import PageHeader from '../../components/PageHeader.astro';
+       4 import ResourceListing from '../../components/ResourceListing.as
+         tro';
+       5 import { getPublished } from '../../lib/content';
+       6 import { categoryOptions, templateCard, templateCategoryPath } f
+         rom '../../lib/cards';
+       7 import { TEMPLATE_CATEGORIES, TEMPLATE_CATEGORY_LABELS } from '.
+         ./../lib/taxonomy';
+     … +30 lines (ctrl+o to expand)
+
+● Write(src\pages\templates\category\[category].astro)
+  ⎿  Wrote 58 lines to src\pages\templates\category\[category].astro
+       1 ---
+       2 import type { GetStaticPaths } from 'astro';
+       3 import BaseLayout from '../../../layouts/BaseLayout.astro';
+       4 import PageHeader from '../../../components/PageHeader.astro';
+       5 import ResourceListing from '../../../components/ResourceListing
+         .astro';
+       6 import { getPublished } from '../../../lib/content';
+       7 import { countByCategory } from '../../../lib/resources';
+       8 import { categoryOptions, templateCard, templateCategoryPath } f
+         rom '../../../lib/cards';
+     … +50 lines (ctrl+o to expand)
+
+● Write(src\pages\templates\[slug].astro)
+  ⎿  Wrote 90 lines to src\pages\templates\[slug].astro
+       1 ---
+       2 import type { GetStaticPaths } from 'astro';
+       3 import BaseLayout from '../../layouts/BaseLayout.astro';
+       4 import PageHeader from '../../components/PageHeader.astro';
+       5 import Badge from '../../components/Badge.astro';
+       6 import DownloadDetail from '../../components/DownloadDetail.astr
+         o';
+       7 import { getBySlug, getPublished, getRelated, renderBody, type R
+         esource } from '../../lib/content';
+       8 import { resolveDownload } from '../../lib/files';
+     … +82 lines (ctrl+o to expand)
+
+● Write(src\pages\assets\index.astro)
+  ⎿  Wrote 32 lines to src\pages\assets\index.astro
+       1 ---
+       2 import BaseLayout from '../../layouts/BaseLayout.astro';
+       3 import PageHeader from '../../components/PageHeader.astro';
+       4 import ResourceListing from '../../components/ResourceListing.as
+         tro';
+       5 import { getPublished } from '../../lib/content';
+       6 import { assetCard, assetCategoryPath, categoryOptions } from '.
+         ./../lib/cards';
+       7 import { ASSET_CATEGORIES, ASSET_CATEGORY_LABELS } from '../../l
+         ib/taxonomy';
+     … +25 lines (ctrl+o to expand)
+
+● Write(src\pages\assets\category\[category].astro)
+  ⎿  Wrote 53 lines to src\pages\assets\category\[category].astro
+       1 ---
+       2 import type { GetStaticPaths } from 'astro';
+       3 import BaseLayout from '../../../layouts/BaseLayout.astro';
+       4 import PageHeader from '../../../components/PageHeader.astro';
+       5 import ResourceListing from '../../../components/ResourceListing
+         .astro';
+       6 import { getPublished } from '../../../lib/content';
+       7 import { countByCategory } from '../../../lib/resources';
+       8 import { assetCard, assetCategoryPath, categoryOptions } from '.
+         ./../../lib/cards';
+     … +45 lines (ctrl+o to expand)
+
+● Write(src\pages\assets\[slug].astro)
+  ⎿  Wrote 83 lines to src\pages\assets\[slug].astro
+       1 ---
+       2 import type { GetStaticPaths } from 'astro';
+       3 import BaseLayout from '../../layouts/BaseLayout.astro';
+       4 import PageHeader from '../../components/PageHeader.astro';
+       5 import Badge from '../../components/Badge.astro';
+       6 import DownloadDetail from '../../components/DownloadDetail.astr
+         o';
+       7 import { getPublished, getRelated, renderBody, type Resource } f
+         rom '../../lib/content';
+       8 import { resolveDownload } from '../../lib/files';
+     … +75 lines (ctrl+o to expand)
+
+● Now the content entries, nine files. Each template's notes link Canva users to
+  the blank background asset:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The shell tripped on apostrophes inside the inline script again, so nothing
+  was written. I'll save the script to a file and run it from there:
+
+  Made 1 scratchpad edit +144, ran 2 shell commands (ctrl+o to expand)
+
+● The build passes. Running the link check (which now covers downloads too) and
+  taking screenshots:
+
+  Read 2 files, ran 1 shell command (ctrl+o to expand)
+
+● The new pages check out, with licence and credit shown above the download
+  button. I'm running the phone-width overflow test and confirming the downloads
+  serve correctly next.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● No overflow on any page. Previews are WebP with explicit sizes, lazy loading
+  and alt text, and downloads serve as SVG. Last test: a missing download file
+  must fail the build.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The build stops with a clear message, so a broken download can't ship.
+  Updating the docs and running the full check suite:
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● M1.4 is done and committed (204167c). The site now has a Template Library and
+  a Jain Digital Assets library with 9 original, downloadable designs, and both
+  appear in the header menu.
+
+  What I made (all original, with no figures and no religious symbols):
+  - 4 templates (SVG, with editable [placeholder] text):
+    - Festival greeting poster (4:5).
+    - Temple or sangh event invitation (5×7, print-ready).
+    - Square social post.
+    - WhatsApp status / Instagram story (9:16).
+  - 5 assets: lotus icon, diya icon, lotus border frame with a transparent
+    centre, seamless lotus pattern tile, and a festive cream background.
+
+  What a visitor sees on each download page:
+  - A large preview.
+  - Format, file size, dimensions, which apps can edit it, the licence, a
+    plain-language "You may…" line and the credit line, all before the Download 
+    SVG (8 KB) button.
+  - Template pages explain how to edit the text. They also point Canva users to
+    the blank background, because Canva doesn't keep SVG text editable.
+
+  Safeguards added:
+  - If a download file is missing, the build fails with a clear message. I
+    tested this by removing a file.
+  - File sizes are read from the actual file, so they can't drift out of date.
+  - Every preview image must have alt text, or the build fails.
+  - Previews are served as optimised WebP images with fixed dimensions and lazy
+    loading.
+
+  Checks: type check had 0 errors, lint and formatting are clean, all 41 tests
+  pass, and 38 pages build. All 719 internal links resolve, and none of the 8
+  pages tested overflow sideways at 320px or 390px.
+
+  Two decisions for you:
+  1. Licence wording. I published the designs as "Jain Genius original": free
+     for personal, family, temple and community use, not for sale, and not to be
+     presented as an official logo. Please confirm or change those terms.
+     They're one line in src/lib/taxonomy.ts. If you'd rather use a standard
+     licence such as CC BY 4.0, that's a one-word change per file.
+  2. Review. All 9 designs show Pending review. To approve one, set
+     religiousReviewStatus: approved in its file.
+
+  Next milestone: M1.5, the AI Tools Directory. For each tool's free-plan
+  details and "last verified" date, I'll check the official provider websites
+  rather than rely on memory.
+
+✻ Cooked for 9m 44s · done 9:02 PM
+
+※ recap: We're building the Jain AI resource site from your PRD; the Prompt Library, templates and assets are now built and committed. Next, confirm the licence wording for the designs, then I'll start the AI Tools Directory. (disable recaps in /config)
+
+❯ proceed                                                                       
+
+● Starting M1.5: AI Tools Directory.
+
+  Files expected to change:
+  - New pages: src/pages/tools/index.astro,
+    src/pages/tools/category/[category].astro and src/pages/tools/[slug].astro.
+  - Updates: src/lib/cards.ts, the nav and the homepage.
+  - About 8 tool profiles in src/content/tools/.
+
+  Acceptance criteria (PRD):
+  - Tool cards link to official websites and show free-plan status, the caveat,
+    and when it was last checked.
+  - External links open safely and are clearly marked.
+
+  First I'll check each provider's current free plan on the web instead of
+  relying on memory. (I also see you approved the ahimsa reel prompt, so its
+  review label is gone.)
+
+● Web Search("ChatGPT free plan limits pricing November 2026")
+  ⎿  Did 1 search in 6s
+
+● Web Search("Google Gemini app free plan vs Google AI Pro 2026")
+  ⎿  Did 1 search in 8s
+
+● Web Search("Claude.ai free plan pricing 2026")
+  ⎿  Did 1 search in 6s
+● Web Search("Canva free plan Magic Studio AI features limits 2026")
+  ⎿  Did 1 search in 7s
+
+● Web Search("Ideogram free plan credits 2026")
+  ⎿  Did 1 search in 6s
+
+● Web Search("Microsoft Copilot free app features 2026")
+  ⎿  Did 1 search in 8s
+
+● Web Search("Adobe Express free plan generative credits Firefly 2026")
+  ⎿  Did 1 search in 7s
+
+● Web Search("Google Translate languages Gujarati Hindi free no account")
+  ⎿  Did 1 search in 6s
+
+● The search results are mostly third-party blogs, and they disagree. Ideogram's
+  free plan apparently changed in October 2026. I'll read the official pricing
+  pages directly before writing anything:
+
+● web-fetch(Read official AI pricing pages)
+  ⎿  Received 148 bytes
+
+› Message from web-fetch
+  Results for the 8 pricing/plan pages. Pages 4 and 6 failed to load. Summaries
+  are from verbatim page text unless noted.
+
+  1. ChatGPT (https://chatgpt.com/pricing), loaded (HTTP 200)
+  - Free plan: yes. The page says "The free version of ChatGPT is available to
+  everyone."
+  - Free includes: unlimited text chats "subject to abuse guardrails," plus
+  limited uploads, image creation, voice, deep research, memory, Codex, and
+  ChatGPT Work on desktop. Free input maximum is "~12 pages of text."
+  - Sign-in: not explicitly stated. The header shows "Log in" and "Sign up for
+  free."
+  - Cheapest paid: "Go" ("Expanded access"). The extracted text shows no price
+  for Go, Plus, or Pro.
+
+  2. Claude (https://claude.com/pricing), loaded (HTTP 200)
+  - Free plan: yes. Listed as "Free for everyone," $0.
+  - Free includes: "Limited usage" every 5 hours and every week; chat on web,
+  desktop, and mobile; web search, file creation, and code execution; memory;
+  Artifacts; Claude Design, Slides, Docs. Free has Sonnet and Haiku, but not
+  Opus.
+  - Sign-in: not explicitly stated. The free "Try Claude" button links to
+  claude.ai/login?plan=free.
+  - Cheapest paid: Pro, $17/month with annual subscription ($200 billed up
+  front), or $20 if billed monthly.
+
+  3. Gemini (https://gemini.google/subscriptions/), loaded partially (HTTP 200)
+  - The page is served in Kannada, so the wording below is my English
+  translation. Only the first ~40k characters were read verbatim. The rest came
+  as a model summary, and that summary wrongly said there is no free tier and no
+  prices. I relied on the verbatim section instead.
+  - Free plan: yes. The first card is shown with no charge, "₹0 INR / month,"
+  with a Google account.
+  - Free includes: Gemini app access to a Flash-Lite model, image generation and
+  editing, Deep Research, Gemini Live, Canvas, and Gems. Google Flow includes
+  limited Nano Banana Pro access. Storage is 15 GB across Gmail, Drive, and
+  Photos.
+  - Sign-in: yes, the free card says "with a Google account."
+  - Cheapest paid: Google AI Plus, ₹399 INR/month (India region pricing as
+  displayed). Pro is ₹1,950/month and Ultra starts at ₹6,500/month.
+
+  4. Canva (https://www.canva.com/pricing/), FAILED: HTTP 403 Forbidden. This is
+  a permanent refusal, so resending the same URL will fail the same way.
+  Nothing was read.
+
+  5. Adobe Express (https://www.adobe.com/express/pricing), loaded (HTTP 200)
+  - Free plan: yes. Listed as "Adobe Express Free," US$0.00.
+  - Free includes: "basic editing tools and limited assets." Listed items:
+  100,000+ templates, 1M+ Adobe Stock assets (a footnote requires an Adobe
+  Express membership), 4,000+ fonts, 5GB storage, 10-day version history,
+  scheduling to 1 account per social network, and free daily generations for
+  some AI features. The page says "Free to use. No credit card required."
+  - Sign-in: unclear. The page does not explicitly say an account is required.
+  - Cheapest paid: Adobe Express Premium, US$9.99/mo, with "No annual
+  commitment, billed monthly."
+
+  6. Ideogram (https://ideogram.ai/pricing), FAILED: HTTP 403 Forbidden. This is
+  a permanent refusal, so resending the same URL will fail the same way.
+  Nothing was read.
+
+  7. Microsoft Copilot for individuals
+  (https://www.microsoft.com/en-us/microsoft-copilot/for-individuals), loaded
+  (HTTP 200)
+  - Free plan: unclear. The page lists only paid Microsoft 365 plans. It
+  mentions "higher usage than free" but does not describe a free Copilot tier.
+  The "Try free for one month" offer is a trial, not a free plan.
+  - Free includes: not stated.
+  - Sign-in: not stated. A footnote says some AI features require a Personal,
+  Family, or Premium subscription and "only available to subscription owner."
+  - Cheapest paid: Microsoft 365 Personal, $9.99/month (or $99.99/year).
+
+  8. Google Translate help
+  (https://support.google.com/translate/answer/6142478), loaded (HTTP 200)
+  - The page does not imply that sign-in is needed to translate text. It says
+  "You can use the Google Translate app to translate written words or phrases"
+  and also mentions use in a web browser. The translate steps include no sign-in
+  step. The "Sign in" link in the page header is general help-site navigation.
+
+● Five free plans (ChatGPT, Claude, Gemini, Adobe Express, Google Translate) are
+  confirmed and will be published; Canva, Ideogram and Copilot stay as drafts
+  for an editor to check, since their pricing pages blocked access or describe
+  only paid plans.
+
+● Write(src\content\tools\chatgpt.md)
+  ⎿  Added 23 lines, removed 6 lines
+      1  ---
+      2  name: ChatGPT
+      3 -description: A general-purpose chat assistant from OpenAI for dr
+        -afting text, captions, invitations, quizzes and ideas.          
+      3 +description: A chat assistant from OpenAI for drafting invitatio
+        +ns, greetings, captions, quizzes and ideas in plain language.   
+      4  category: chat-assistant
+      5  provider: OpenAI
+      6  officialUrl: https://chatgpt.com
+     ...
+       8    - Drafting invitation and greeting text
+       9    - Writing social media captions
+      10    - Creating quiz questions for teachers to check
+      11 -freePlanStatus: unknown                                        
+      12 -freePlanNotes: Not yet verified. Check the official site before
+         - publishing.                                                   
+      13 -tags: [chat, writing]                                          
+      14 -status: draft                                                  
+      11 +  - Turning rough notes into a clear announcement              
+      12 +freePlanStatus: limited-free                                   
+      13 +freePlanNotes: The official pricing page says the free version 
+         +is available to everyone, with text chats and limited file uplo
+         +ads, image creation, voice and deep research. Paid plans (Go, P
+         +lus and Pro) raise the limits.                                 
+      14 +accountRequired: true                                          
+      15 +lastVerifiedAt: 2026-11-07                                     
+      16 +reviewedBy: AI-assisted check of the official pricing page; edi
+         +tor confirmation pending                                       
+      17 +tags: [chat, writing, captions, invitations]                   
+      18 +featured: true                                                 
+      19 +status: published                                              
+      20 +publishedAt: 2026-11-07                                        
+      21  createdAt: 2026-11-07
+      22  ---
+      23  
+      18 -Draft profile. Free-plan details, account requirements and step
+         --by-step instructions will be verified against the official web
+         -site before publication.                                       
+      24 +## Getting started                                             
+      25 +                                                               
+      26 +1. Go to the official website and choose **Sign up for free** (
+         +or install the official app).                                  
+      27 +2. Paste a prompt from our [Prompt Library](/prompts) into the 
+         +message box.                                                   
+      28 +3. Replace anything in [SQUARE BRACKETS] with your own details 
+         +and send it.                                                   
+      29 +4. Ask for changes in plain words, such as "make it shorter" or
+         + "write it in Hindi".                                          
+      30 +                                                               
+      31 +## Tips for Jain content                                       
+      32 +                                                               
+      33 +- Ask it to keep to facts that are widely accepted across Jain 
+         +traditions, and to say when something differs between tradition
+         +s.                                                             
+      34 +- Always check religious names, dates and quotations with a tru
+         +sted source. Chat assistants can sound confident and still be w
+         +rong.                                                          
+      35 +- Do not share private details of other people in your chats.  
+
+● Write(src\content\tools\claude.md)
+  ⎿  Wrote 34 lines to src\content\tools\claude.md
+       1 ---
+       2 name: Claude
+       3 description: A chat assistant from Anthropic for careful writing
+         , summarising long documents and drafting educational material.
+       4 category: chat-assistant
+       5 provider: Anthropic
+       6 officialUrl: https://claude.ai
+       7 useCases:
+       8   - Drafting pathshala lessons and quizzes for teachers to check
+       9   - Summarising long documents or meeting notes
+     … +25 lines (ctrl+o to expand)
+
+● Write(src\content\tools\gemini.md)
+  ⎿  Wrote 34 lines to src\content\tools\gemini.md
+       1 ---
+       2 name: Gemini
+       3 description: Google's AI assistant for writing, research and cre
+         ating images, available on the web and in the Gemini app.
+       4 category: chat-assistant
+       5 provider: Google
+       6 officialUrl: https://gemini.google.com
+       7 useCases:
+       8   - Drafting greetings, captions and invitations
+       9   - Creating simple images from our image prompts
+     … +25 lines (ctrl+o to expand)
+
+● Write(src\content\tools\adobe-express.md)
+  ⎿  Wrote 34 lines to src\content\tools\adobe-express.md
+       1 ---
+       2 name: Adobe Express
+       3 description: An easy online design app from Adobe for posters, i
+         nvitations and social posts, with templates and some AI features
+         .
+       4 category: design
+       5 provider: Adobe
+       6 officialUrl: https://www.adobe.com/express/
+       7 useCases:
+       8   - Adding your own text to our backgrounds and templates
+     … +26 lines (ctrl+o to expand)
+
+● Write(src\content\tools\google-translate.md)
+  ⎿  Wrote 32 lines to src\content\tools\google-translate.md
+       1 ---
+       2 name: Google Translate
+       3 description: Free translation between English, Hindi, Gujarati a
+         nd many other languages, in a browser or the mobile app.
+       4 category: translation
+       5 provider: Google
+       6 officialUrl: https://translate.google.com
+       7 useCases:
+       8   - Translating invitations and announcements into Hindi or Guja
+         rati
+     … +24 lines (ctrl+o to expand)
+
+● Write(src\content\tools\canva.md)
+  ⎿  Wrote 17 lines to src\content\tools\canva.md
+       1 ---
+       2 name: Canva
+       3 description: A popular online design app for posters, invitation
+         s and social posts, with templates and AI features.
+       4 category: design
+       5 provider: Canva
+       6 officialUrl: https://www.canva.com
+       7 useCases:
+       8   - Adding your own text to our backgrounds and borders
+       9   - Making posters, invitations and social posts
+     … +8 lines (ctrl+o to expand)
+
+● Write(src\content\tools\ideogram.md)
+  ⎿  Wrote 16 lines to src\content\tools\ideogram.md
+       1 ---
+       2 name: Ideogram
+       3 description: An AI image generator known for handling text insid
+         e images, useful for poster ideas.
+       4 category: image
+       5 provider: Ideogram
+       6 officialUrl: https://ideogram.ai
+       7 useCases:
+       8   - Generating poster and greeting image ideas from our image pr
+         ompts
+     … +8 lines (ctrl+o to expand)
+
+● Write(src\content\tools\microsoft-copilot.md)
+  ⎿  Wrote 17 lines to src\content\tools\microsoft-copilot.md
+       1 ---
+       2 name: Microsoft Copilot
+       3 description: Microsoft's AI assistant for questions, writing and
+          images, on the web and in the Copilot app.
+       4 category: chat-assistant
+       5 provider: Microsoft
+       6 officialUrl: https://copilot.microsoft.com
+       7 useCases:
+       8   - Drafting greetings and announcements
+       9   - Answering general questions
+     … +8 lines (ctrl+o to expand)
+  ⎿  Loaded src\content\tools\CLAUDE.md
+
+● Windows treats claude.md as CLAUDE.md, so Claude Code would load the tool
+  profile as agent instructions; I'm renaming it to claude-ai.md and its URL to
+  /tools/claude-ai to avoid that.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now the tool cards and the three pages:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(src\pages\tools\index.astro)
+  ⎿  Wrote 48 lines to src\pages\tools\index.astro
+       1 ---
+       2 import BaseLayout from '../../layouts/BaseLayout.astro';
+       3 import PageHeader from '../../components/PageHeader.astro';
+       4 import ResourceListing from '../../components/ResourceListing.as
+         tro';
+       5 import Notice from '../../components/Notice.astro';
+       6 import { getPublished } from '../../lib/content';
+       7 import { categoryOptions, toolCard, toolCategoryPath } from '../
+         ../lib/cards';
+       8 import { TOOL_CATEGORIES, TOOL_CATEGORY_LABELS } from '../../lib
+     … +41 lines (~1 KB) (ctrl+o to expand)
+
+● Write(src\pages\tools\category\[category].astro)
+  ⎿  Wrote 49 lines to src\pages\tools\category\[category].astro
+      1 ---
+      2 import type { GetStaticPaths } from 'astro';
+      3 import BaseLayout from '../../../layouts/BaseLayout.astro';
+      4 import PageHeader from '../../../components/PageHeader.astro';
+      5 import ResourceListing from '../../../components/ResourceListing.
+        astro';
+      6 import { getPublished } from '../../../lib/content';
+      7 import { countByCategory } from '../../../lib/resources';
+      8 import { categoryOptions, toolCard, toolCategoryPath } from '../.
+        ./../lib/cards';
+     … +41 lines (ctrl+o to expand)
+● Write(src\pages\tools\[slug].astro)
+  ⎿  Wrote 210 lines to src\pages\tools\[slug].astro
+       1 ---
+       2 import type { GetStaticPaths } from 'astro';
+       3 import BaseLayout from '../../layouts/BaseLayout.astro';
+       4 import PageHeader from '../../components/PageHeader.astro';
+       5 import Badge from '../../components/Badge.astro';
+       6 import MetaList from '../../components/MetaList.astro';
+       7 import Notice from '../../components/Notice.astro';
+       8 import CardGrid from '../../components/CardGrid.astro';
+       9 import ResourceCard from '../../components/ResourceCard.astro';
+      10 import { getPublished, getRelated, renderBody, type Resource } f
+     … +201 lines (~6 KB) (ctrl+o to expand)
+
+● Adding the nav item and homepage link, then building:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The build passes with 0 broken links. Three more checks:
+  - Every new-tab link in the site has the safe rel attribute.
+  - The official tool URLs respond.
+  - No new page overflows at phone widths.
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● The tool page works, but Markdown headings render larger than the page's own
+  headings. I'm reducing all headings inside Markdown content by one size across
+  the site.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● All checks pass. I'll add a note to CLAUDE.md about the filename clash, update
+  the README and commit:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● M1.5 is done and committed (20491c7). The AI Tools Directory is live in the
+  local build with 5 tools, and "AI Tools" is in the header. Your approval of
+  the ahimsa reel prompt is in this commit too.
+
+  Published tools: ChatGPT, Claude, Gemini, Adobe Express and Google Translate.
+  Each page shows:
+  - What the tool is good for, simple getting-started steps, and tips for Jain
+    content. For example, check religious facts, and don't translate phrases
+    like "Jai Jinendra".
+  - The free-plan status (Free / Limited free) with a short note, whether a
+    sign-up is needed, and "Last checked 7 Nov 2026".
+  - A warning that plans change often, and a clearly marked button to the
+    official website that opens safely in a new tab.
+  - Matching prompts from the Prompt Library, for example "Prompts to try with
+    Gemini".
+  - A note on the listing page that Jain AI isn't connected to or paid by these
+    companies.
+
+  How I checked the free plans: web search results were mostly blogs that
+  disagreed with each other. So every free-plan note repeats only what the
+  provider's own pricing or help page said on 7 Nov 2026. I left out prices,
+  because they vary by country and change often.
+
+  Kept as drafts (not shown on the site):
+  - Canva and Ideogram: their pricing pages blocked automated access, and
+    Ideogram reportedly changed its free plan in October.
+  - Microsoft Copilot: the official page only described paid Microsoft 365
+    plans.
+
+  An editor needs to confirm these before they go live. The steps are in each
+  file.
+
+  Something to know: each tool's "reviewed by" field says "AI-assisted check,
+  editor confirmation pending". It isn't shown on the site, but please have
+  someone look over the five notes before launch.
+
+  One fix along the way: Windows treats claude.md and CLAUDE.md as the same
+  filename, so Claude Code was reading the Claude tool profile as instructions
+  for itself. I renamed it to claude-ai.md (URL /tools/claude-ai) and added a
+  warning to CLAUDE.md.
+
+  Checks:
+  - Type check had 0 errors, lint and formatting are clean, all 41 tests pass,
+    and 47 pages build.
+  - All 990 internal links resolve, and every new-tab link has the safe rel
+    attribute.
+  - No sideways overflow at phone widths.
+  - The Claude and Adobe websites refused my automated test request (403), which
+    is normal bot protection. The other official URLs responded normally.
+
+  Next milestone: M1.6, Festivals and the Learning Centre. Festival pages need
+  date sources and a "last verified" date before the build allows them to be
+  published. I can research the main observances and cite sources, but please
+  plan for a knowledgeable reviewer to check them before launch.
+
+  Sources:
+  - ChatGPT pricing (official) (https://chatgpt.com/pricing)
+  - Claude pricing (official) (https://claude.com/pricing)
+  - Gemini subscriptions (official) (https://gemini.google/subscriptions/)
+  - Adobe Express pricing (official) (https://www.adobe.com/express/pricing)
+  - Microsoft Copilot for individuals (official)
+    (https://www.microsoft.com/en-us/microsoft-copilot/for-individuals)
+  - Google Translate help (official)
+    (https://support.google.com/translate/answer/6142478)
+  - Ideogram pricing change tracker (Oct 2026)
+    (https://pricingsaas.com/companies/ideogram/diffs/2026W43)
+  - Engadget: ChatGPT free features 2026
+    (https://engadget.com/2234173/chatgpt-free-features-2026)
+
+✻ Churned for 6m 57s · done 9:14 PM

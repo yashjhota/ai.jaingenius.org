@@ -1,0 +1,36 @@
+M1.5 is done and committed (20491c7). The AI Tools Directory is live in the local build with 5 tools, and "AI Tools" is in the header. Your approval of the ahimsa reel prompt is in this commit too.
+
+Published tools: ChatGPT, Claude, Gemini, Adobe Express and Google Translate. Each page shows:
+- What the tool is good for, simple getting-started steps, and tips for Jain content. For example, check religious facts, and don't translate phrases like "Jai Jinendra".
+- The free-plan status (Free / Limited free) with a short note, whether a sign-up is needed, and "Last checked 7 Nov 2026".
+- A warning that plans change often, and a clearly marked button to the official website that opens safely in a new tab.
+- Matching prompts from the Prompt Library, for example "Prompts to try with Gemini".
+- A note on the listing page that Jain AI isn't connected to or paid by these companies.
+
+How I checked the free plans: web search results were mostly blogs that disagreed with each other. So every free-plan note repeats only what the provider's own pricing or help page said on 7 Nov 2026. I left out prices,
+because they vary by country and change of
+
+Kept as drafts (not shown on the site):
+- Canva and Ideogram: their pricing pages blocked automated access, and Ideogram reportedly changed its free plan in October.
+- Microsoft Copilot: the official page onl5 plans.
+
+An editor needs to confirm these before they go live. The steps are in each file.
+
+Something to know: each tool's "reviewed by" field says "AI-assisted check, editor confirmation pending". It isn't shown on the site, but please have someone look over the five notes before launch.                              
+One fix along the way: Windows treats claude.md and CLAUDE.md as the same filename, so Claude Code was reading the Claude tool profile as instructions for itself. I renamed it to claude-ai.md (URL /tools/claude-ai) and added a warning to CLAUDE.md.
+                                                                                                                Checks:
+- Type check had 0 errors, lint and formatting are clean, all 41 tests pass, and 47 pages build.                - All 990 internal links resolve, and everel attribute.
+- No sideways overflow at phone widths.
+- The Claude and Adobe websites refused my automated test request (403), which is normal bot protection. The oth  official URLs responded normally.
+
+Next milestone: M1.6, Festivals and the Learning Centre. Festival pages need date sources and a "last verified" date before the build allows them to be puain observances and cite sources, butplease plan for a knowledgeable reviewer to check them before launch.
+
+Sources:
+- ChatGPT pricing (official) (https://chatgpt.com/pricing)
+- Claude pricing (official) (https://claud
+- Gemini subscriptions (official) (https://gemini.google/subscriptions/)
+- Adobe Express pricing (official) (https:ng)
+- Microsoft Copilot for individuals (official) (https://www.microsoft.com/en-us/microsoft-copilot/for-individuals)
+- Google Translate help (official) (https://support.google.com/translate/answer/6142478)
+- Ideogram pricing change tracker (Oct 202ompanies/ideogram/diffs/2026W43)
+- Engadget: ChatGPT free features 2026 (https://engadget.com/2234173/chatgpt-free-features-2026)
