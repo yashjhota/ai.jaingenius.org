@@ -1,0 +1,78 @@
+---
+/**
+ * Category filter as plain links to pre-built category pages, so filtering
+ * works without JavaScript. Pass only categories that have entries, so no
+ * link leads to an empty page.
+ */
+export interface CategoryOption {
+  /** URL of the category page. */
+  href: string;
+  label: string;
+  count: number;
+}
+
+export interface Props {
+  allHref: string;
+  allCount: number;
+  options: readonly CategoryOption[];
+  /** href of the active option; omit when "All" is active. */
+  currentHref?: string | undefined;
+  label?: string;
+}
+
+const { allHref, allCount, options, currentHref, label = 'Filter by category' } = Astro.props;
+const items = [{ href: allHref, label: 'All', count: allCount }, ...options];
+const active = currentHref ?? allHref;
+---
+
+{options.length > 1 && (
+  <nav class="filter" aria-label={label}>
+    <ul>
+      {items.map((item) => (
+        <li>
+          <a href={item.href} aria-current={item.href === active ? 'page' : undefined}>
+            {item.label} <span class="filter__count">({item.count})</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .filter ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .filter a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    min-height: 40px;
+    padding: var(--space-1) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .filter a:hover {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+  .filter a[aria-current='page'] {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-contrast);
+  }
+  .filter__count {
+    font-weight: 400;
+    opacity: 0.85;
+  }
+</style>

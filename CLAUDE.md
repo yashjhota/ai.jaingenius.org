@@ -33,6 +33,10 @@
   Phase 2 can swap the source to D1. Keep logic in `src/lib/resources.ts` and unit-test it.
 - New categories, licences or traditions go in `src/lib/taxonomy.ts`. Publish requirements go
   in `src/lib/publish-rules.ts`, with tests.
+- Reuse shared components in `src/components/`: `PageHeader` (with `Breadcrumbs`),
+  `CardGrid` + `ResourceCard`, `CategoryFilter` (links to pre-built category pages; pass only
+  non-empty categories), `EmptyState`, `MetaList`, `Badge`, `TagList`, `CopyButton`.
+  Interactive bits use small custom elements, hidden until JavaScript runs.
 - Every page uses `BaseLayout` and passes a unique `title` and `description`.
 - External links that open a new tab use `rel="noopener noreferrer"` and say so to screen
   readers.

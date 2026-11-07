@@ -1,0 +1,42 @@
+---
+/** Honest message when a list has nothing to show (PRD §10.2). */
+export interface Props {
+  title: string;
+  message?: string;
+  action?: { href: string; label: string } | undefined;
+}
+
+const { title, message, action } = Astro.props;
+---
+
+<div class="empty" role="status">
+  <p class="empty__title">{title}</p>
+  {message && <p class="empty__message">{message}</p>}
+  <slot />
+  {action && (
+    <a class="button button--secondary" href={action.href}>
+      {action.label}
+    </a>
+  )}
+</div>
+
+<style>
+  .empty {
+    text-align: center;
+    padding: var(--space-7) var(--space-5);
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+  }
+  .empty__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    color: var(--brand-strong);
+    margin-bottom: var(--space-2);
+  }
+  .empty__message {
+    color: var(--text-muted);
+    max-width: 50ch;
+    margin-inline: auto;
+  }
+</style>

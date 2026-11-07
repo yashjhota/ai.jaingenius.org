@@ -1,0 +1,83 @@
+---
+/**
+ * Short label that says what something is (PRD §10.2): "Prompt", "Template",
+ * "Download", "External tool", "Pending review", "AI-generated draft".
+ */
+export type BadgeVariant =
+  | 'prompt'
+  | 'template'
+  | 'asset'
+  | 'tool'
+  | 'festival'
+  | 'guide'
+  | 'download'
+  | 'external'
+  | 'pending'
+  | 'ai-draft'
+  | 'neutral';
+
+export interface Props {
+  variant?: BadgeVariant;
+  /** Optional longer explanation, shown as a tooltip and read by screen readers. */
+  title?: string;
+}
+
+const { variant = 'neutral', title } = Astro.props;
+---
+
+<span class:list={['badge', `badge--${variant}`]} title={title}>
+  {variant === 'pending' && <span aria-hidden="true">⚠</span>}
+  <slot />
+  {variant === 'external' && <span aria-hidden="true">↗</span>}
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    padding: 0.15em 0.6em;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    background: var(--surface-muted);
+    color: var(--text);
+  }
+  .badge--prompt,
+  .badge--tool {
+    background: var(--info-bg);
+    color: var(--info-text);
+  }
+  .badge--template,
+  .badge--festival {
+    background: var(--accent-soft);
+    color: #6b3708;
+  }
+  .badge--asset,
+  .badge--guide {
+    background: var(--success-bg);
+    color: var(--success-text);
+  }
+  .badge--download {
+    background: var(--brand);
+    color: var(--brand-contrast);
+  }
+  .badge--external {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-muted);
+  }
+  .badge--pending {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+    color: var(--warning-text);
+  }
+  .badge--ai-draft {
+    background: var(--warning-bg);
+    border: 1px dashed var(--warning-text);
+    color: var(--warning-text);
+  }
+</style>

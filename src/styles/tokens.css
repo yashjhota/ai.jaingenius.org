@@ -30,6 +30,15 @@
   --border: #e3d6bf;
   --focus: var(--color-saffron-500);
 
+  /* Status colours (text on its own background meets WCAG AA) */
+  --success-bg: #e3f1e4;
+  --success-text: #1f5a2a;
+  --warning-bg: #fff1c9;
+  --warning-text: #5f4200;
+  --warning-border: #e2c15a;
+  --info-bg: #f6e3e5;
+  --info-text: var(--color-maroon-900);
+
   /* Typography */
   --font-sans:
     system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari',

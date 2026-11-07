@@ -1,0 +1,63 @@
+---
+/** Label/value facts about a resource (format, size, licence, last verified...). */
+export interface MetaItem {
+  label: string;
+  value: string;
+  /** Optional link for the value, e.g. licence text. External links open in a new tab. */
+  href?: string | undefined;
+}
+
+export interface Props {
+  items: readonly (MetaItem | false | undefined | null)[];
+  label?: string;
+}
+
+const items = Astro.props.items.filter((i): i is MetaItem => Boolean(i));
+const isExternal = (href: string) => /^https?:\/\//.test(href);
+---
+
+{items.length > 0 && (
+  <dl class="meta" aria-label={Astro.props.label}>
+    {items.map((item) => (
+      <div class="meta__row">
+        <dt>{item.label}</dt>
+        <dd>
+          {item.href ? (
+            isExternal(item.href) ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer">
+                {item.value}
+                <span class="visually-hidden"> (opens in a new tab)</span>
+              </a>
+            ) : (
+              <a href={item.href}>{item.value}</a>
+            )
+          ) : (
+            item.value
+          )}
+        </dd>
+      </div>
+    ))}
+  </dl>
+)}
+
+<style>
+  .meta {
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+  .meta__row {
+    display: grid;
+    grid-template-columns: minmax(7rem, 35%) 1fr;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .meta dt {
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .meta dd {
+    margin: 0;
+  }
+</style>

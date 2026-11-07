@@ -1,0 +1,92 @@
+---
+/**
+ * Copies the text of another element (by id) to the clipboard.
+ *
+ * Without JavaScript the button stays hidden (no button that does nothing) and
+ * the text remains selectable. If the Clipboard API fails, the text is selected
+ * and the visitor is told to press Ctrl+C / Cmd+C.
+ */
+export interface Props {
+  /** id of the element whose text is copied. */
+  target: string;
+  label?: string;
+  copiedLabel?: string;
+}
+
+const { target, label = 'Copy', copiedLabel = 'Copied!' } = Astro.props;
+---
+
+<copy-button data-target={target} data-label={label} data-copied-label={copiedLabel}>
+  <button type="button" class="button copy-button" hidden>
+    <span class="copy-button__label">{label}</span>
+  </button>
+  <span class="copy-button__status" role="status" aria-live="polite"></span>
+</copy-button>
+
+<script>
+  class CopyButton extends HTMLElement {
+    private timer: number | undefined;
+
+    connectedCallback() {
+      const button = this.querySelector('button');
+      if (!button) return;
+      button.hidden = false;
+      button.addEventListener('click', () => void this.copy());
+    }
+
+    private async copy() {
+      const target = document.getElementById(this.dataset.target ?? '');
+      const labelEl = this.querySelector<HTMLElement>('.copy-button__label');
+      const status = this.querySelector<HTMLElement>('.copy-button__status');
+      const button = this.querySelector('button');
+      if (!target || !labelEl || !status || !button) return;
+
+      const text = (target.innerText || target.textContent || '').trim();
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch {
+        // Clipboard API unavailable (e.g. insecure context): select the text instead.
+        const range = document.createRange();
+        range.selectNodeContents(target);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+
+      window.clearTimeout(this.timer);
+      if (copied) {
+        labelEl.textContent = this.dataset.copiedLabel ?? 'Copied!';
+        button.classList.add('is-copied');
+        status.textContent = 'Copied to clipboard.';
+      } else {
+        status.textContent = 'Text selected. Press Ctrl+C (or Cmd+C on Mac) to copy.';
+      }
+      this.timer = window.setTimeout(() => {
+        labelEl.textContent = this.dataset.label ?? 'Copy';
+        button.classList.remove('is-copied');
+        status.textContent = '';
+      }, 4000);
+    }
+  }
+
+  if (!customElements.get('copy-button')) customElements.define('copy-button', CopyButton);
+</script>
+
+<style>
+  copy-button {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .copy-button.is-copied {
+    background: var(--success-text);
+    border-color: var(--success-text);
+  }
+  .copy-button__status {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+</style>

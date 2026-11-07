@@ -1,0 +1,52 @@
+---
+/** Top of a listing or detail page: optional breadcrumbs, eyebrow, title and intro. */
+import Breadcrumbs, { type Crumb } from './Breadcrumbs.astro';
+
+export interface Props {
+  title: string;
+  intro?: string | undefined;
+  eyebrow?: string | undefined;
+  breadcrumbs?: readonly Crumb[] | undefined;
+}
+
+const { title, intro, eyebrow, breadcrumbs } = Astro.props;
+---
+
+<header class="page-header">
+  <div class="container">
+    {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+    {eyebrow && <p class="page-header__eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {intro && <p class="page-header__intro">{intro}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding-block: var(--space-6);
+  }
+  .page-header :global(.breadcrumbs) {
+    margin-bottom: var(--space-4);
+  }
+  .page-header h1 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-3);
+  }
+  .page-header__eyebrow {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: var(--space-2);
+  }
+  .page-header__intro {
+    max-width: 65ch;
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+</style>

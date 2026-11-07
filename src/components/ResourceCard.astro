@@ -1,0 +1,154 @@
+---
+/**
+ * Card for any resource in a listing. The title link stretches over the whole
+ * card, so the card is one click target but only one link for screen readers.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Badge, { type BadgeVariant } from './Badge.astro';
+
+export interface Props {
+  href: string;
+  title: string;
+  /** What the resource does, in one or two sentences (PRD §10.2). */
+  summary: string;
+  typeLabel: string;
+  typeVariant: BadgeVariant;
+  /** Short facts such as category, format or aspect ratio. */
+  meta?: readonly string[];
+  pendingReview?: boolean;
+  image?: ImageMetadata | undefined;
+  imageAlt?: string | undefined;
+  headingLevel?: 2 | 3;
+}
+
+const {
+  href,
+  title,
+  summary,
+  typeLabel,
+  typeVariant,
+  meta = [],
+  pendingReview = false,
+  image,
+  imageAlt = '',
+  headingLevel = 3,
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<article class="card">
+  {image && (
+    <Image
+      class="card__image"
+      src={image}
+      alt={imageAlt}
+      widths={[320, 480, 640]}
+      sizes="(max-width: 40rem) 100vw, 22rem"
+      loading="lazy"
+    />
+  )}
+  <div class="card__body">
+    <div class="card__badges">
+      <Badge variant={typeVariant}>{typeLabel}</Badge>
+      {pendingReview && (
+        <Badge variant="pending" title="Religious content not yet reviewed by an editor">
+          Pending review
+        </Badge>
+      )}
+    </div>
+    <Heading class="card__title">
+      <a href={href}>{title}</a>
+    </Heading>
+    <p class="card__summary">{summary}</p>
+    {meta.length > 0 && (
+      <ul class="card__meta">
+        {meta.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    )}
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition:
+      border-color 0.15s,
+      transform 0.15s;
+  }
+  .card:hover {
+    border-color: var(--brand);
+    transform: translateY(-2px);
+  }
+  .card:focus-within {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+  .card__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--surface-muted);
+  }
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    flex: 1;
+  }
+  .card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .card__title {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+  .card__title a {
+    color: var(--brand-strong);
+    text-decoration: none;
+  }
+  /* Stretch the link over the whole card. */
+  .card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .card__title a:focus-visible {
+    outline: none;
+  }
+  .card:hover .card__title a {
+    text-decoration: underline;
+  }
+  .card__summary {
+    color: var(--text-muted);
+    margin: 0;
+  }
+  .card__meta {
+    list-style: none;
+    margin: auto 0 0;
+    padding: var(--space-2) 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--text-subtle);
+  }
+  .card__meta li + li::before {
+    content: '·';
+    margin-right: var(--space-3);
+  }
+</style>

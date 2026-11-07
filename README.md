@@ -8,11 +8,11 @@ This is an independent project. It does not share code with the main jaingenius.
 
 ## Status
 
-| Phase                   | State                                   |
-| ----------------------- | --------------------------------------- |
-| 0 — Project foundation  | Done                                    |
-| 1 — Public Resource Hub | In progress (M1.1 content schemas done) |
-| 2+ — CMS, builders, AI  | Not started                             |
+| Phase                   | State                        |
+| ----------------------- | ---------------------------- |
+| 0 — Project foundation  | Done                         |
+| 1 — Public Resource Hub | In progress (M1.1–M1.2 done) |
+| 2+ — CMS, builders, AI  | Not started                  |
 
 ## Requirements
 

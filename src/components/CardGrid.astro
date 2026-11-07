@@ -1,0 +1,23 @@
+---
+/** Responsive grid for ResourceCards. Pass each card in its own <li>. */
+export interface Props {
+  label?: string;
+}
+
+const { label } = Astro.props;
+---
+
+<ul class="card-grid" aria-label={label}>
+  <slot />
+</ul>
+
+<style>
+  .card-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  }
+</style>
