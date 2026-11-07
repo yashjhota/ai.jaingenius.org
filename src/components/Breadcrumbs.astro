@@ -3,7 +3,7 @@
  * Breadcrumb trail with matching BreadcrumbList structured data.
  * "Home" is added automatically. The last item is the current page.
  */
-import { SITE } from '../lib/site';
+import { SITE, cleanPath } from '../lib/site';
 
 export interface Crumb {
   label: string;
@@ -24,7 +24,7 @@ const jsonLd = {
     '@type': 'ListItem',
     position: i + 1,
     name: crumb.label,
-    item: new URL(crumb.href ?? Astro.url.pathname, base).href,
+    item: new URL(crumb.href ?? cleanPath(Astro.url.pathname), base).href,
   })),
 };
 ---

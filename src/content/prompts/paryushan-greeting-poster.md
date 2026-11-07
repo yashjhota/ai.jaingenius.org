@@ -7,9 +7,11 @@ intendedTool: Any image generation tool
 language: [en]
 style: Minimal, serene, traditional accents
 aspectRatio: '4:5'
-referenceImageNotes: Not needed. Add your own text afterwards in a design app for best results, as AI tools often misspell words.
+referenceImageNotes: For best results, add the greeting text yourself in a design app afterwards. AI image tools often misspell words.
 religiousReviewStatus: pending
-status: draft
+featured: true
+status: published
+publishedAt: 2026-11-07
 createdAt: 2026-11-07
 ---
 

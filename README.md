@@ -11,7 +11,7 @@ This is an independent project. It does not share code with the main jaingenius.
 | Phase                   | State                        |
 | ----------------------- | ---------------------------- |
 | 0 — Project foundation  | Done                         |
-| 1 — Public Resource Hub | In progress (M1.1–M1.2 done) |
+| 1 — Public Resource Hub | In progress (M1.1–M1.3 done) |
 | 2+ — CMS, builders, AI  | Not started                  |
 
 ## Requirements
@@ -106,6 +106,10 @@ wrangler.jsonc       Cloudflare Workers Static Assets config
 The site is a fully static Astro build. Cloudflare serves the files in `dist/` through Workers
 Static Assets. No Worker script runs and no server adapter is needed yet. `wrangler.jsonc` sets
 `not_found_handling: "404-page"`, so unknown URLs get `dist/404.html` with a 404 status.
+
+URLs have no trailing slash (`/prompts/paryushan-greeting-poster`). Astro builds each page to an
+`.html` file (`build.format: 'file'`), and Cloudflare serves it at the clean URL. Requests ending
+in `.html` or `/` redirect to the clean URL. Test this locally with `npx wrangler dev` after a build.
 
 First-time setup (once per machine):
 

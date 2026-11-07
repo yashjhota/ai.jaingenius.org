@@ -68,3 +68,21 @@ export function pickRelated<T extends ResourceLike>(
     .slice(0, limit)
     .map(({ other }) => other);
 }
+
+/**
+ * Counts entries per category, keeping only categories that have entries,
+ * in the order of `categories` (the taxonomy order).
+ */
+export function countByCategory<C extends string>(
+  list: readonly { data: { category?: string } }[],
+  categories: readonly C[],
+): { category: C; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const item of list) {
+    const c = item.data.category;
+    if (c) counts.set(c, (counts.get(c) ?? 0) + 1);
+  }
+  return categories
+    .filter((c) => (counts.get(c) ?? 0) > 0)
+    .map((c) => ({ category: c, count: counts.get(c) ?? 0 }));
+}

@@ -37,6 +37,8 @@
   `CardGrid` + `ResourceCard`, `CategoryFilter` (links to pre-built category pages; pass only
   non-empty categories), `EmptyState`, `MetaList`, `Badge`, `TagList`, `CopyButton`.
   Interactive bits use small custom elements, hidden until JavaScript runs.
+- URLs have no trailing slash. Write internal links as `/prompts/x`. Use `cleanPath()` from
+  `src/lib/site.ts` whenever reading `Astro.url.pathname` (it includes `.html` at build time).
 - Every page uses `BaseLayout` and passes a unique `title` and `description`.
 - External links that open a new tab use `rel="noopener noreferrer"` and say so to screen
   readers.

@@ -8,6 +8,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://ai.jaingenius.org',
   output: 'static',
-  trailingSlash: 'ignore',
+  // Clean URLs without trailing slashes (/prompts/x). Pages build to x.html, which
+  // Cloudflare's auto-trailing-slash handling serves at /prompts/x with no redirect.
+  trailingSlash: 'never',
+  build: { format: 'file' },
   integrations: [mdx(), sitemap()],
 });

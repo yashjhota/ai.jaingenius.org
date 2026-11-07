@@ -1,0 +1,57 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ResourceListing from '../../../components/ResourceListing.astro';
+import { getPublished } from '../../../lib/content';
+import { countByCategory } from '../../../lib/resources';
+import { promptCard, promptCategoryPath } from '../../../lib/cards';
+import {
+  PROMPT_CATEGORIES,
+  PROMPT_CATEGORY_LABELS,
+  type PromptCategory,
+} from '../../../lib/taxonomy';
+
+// Only categories with at least one published prompt get a page.
+export const getStaticPaths = (async () => {
+  const prompts = await getPublished('prompts');
+  return countByCategory(prompts, PROMPT_CATEGORIES).map(({ category }) => ({
+    params: { category },
+  }));
+}) satisfies GetStaticPaths;
+
+const category = Astro.params.category as PromptCategory;
+const prompts = await getPublished('prompts');
+const inCategory = prompts.filter((p) => p.data.category === category);
+const options = countByCategory(prompts, PROMPT_CATEGORIES).map(({ category: c, count }) => ({
+  href: promptCategoryPath(c),
+  label: PROMPT_CATEGORY_LABELS[c],
+  count,
+}));
+
+const label = PROMPT_CATEGORY_LABELS[category];
+const title = `${label} prompts`;
+const description = `Ready-to-copy AI prompts for ${label.toLowerCase()}, made for the Jain community.`;
+---
+
+<BaseLayout {title} {description}>
+  <PageHeader
+    {title}
+    eyebrow="Prompt Library"
+    intro={description}
+    breadcrumbs={[{ label: 'Prompt Library', href: '/prompts' }, { label }]}
+  />
+  <ResourceListing
+    label={title}
+    cards={inCategory.map(promptCard)}
+    filter={{
+      allHref: '/prompts',
+      allCount: prompts.length,
+      options,
+      currentHref: promptCategoryPath(category),
+    }}
+    emptyTitle="No prompts in this category yet"
+    emptyMessage="Browse all prompts instead."
+    emptyAction={{ href: '/prompts', label: 'See all prompts' }}
+  />
+</BaseLayout>

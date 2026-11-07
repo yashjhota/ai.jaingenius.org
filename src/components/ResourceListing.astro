@@ -1,0 +1,61 @@
+---
+/**
+ * A catalogue page body: optional category filter, a grid of cards, or an
+ * honest empty state. Used by prompts, templates, assets and tools listings.
+ */
+import CardGrid from './CardGrid.astro';
+import ResourceCard, { type Props as CardProps } from './ResourceCard.astro';
+import CategoryFilter, { type CategoryOption } from './CategoryFilter.astro';
+import EmptyState from './EmptyState.astro';
+
+export interface Props {
+  cards: readonly CardProps[];
+  /** Label for the list, e.g. "Prompts". */
+  label: string;
+  filter?:
+    | {
+        allHref: string;
+        allCount: number;
+        options: readonly CategoryOption[];
+        currentHref?: string | undefined;
+      }
+    | undefined;
+  emptyTitle: string;
+  emptyMessage: string;
+  emptyAction?: { href: string; label: string } | undefined;
+}
+
+const { cards, label, filter, emptyTitle, emptyMessage, emptyAction } = Astro.props;
+---
+
+<div class="container page-section listing">
+  {filter && <CategoryFilter {...filter} />}
+  {cards.length > 0 ? (
+    <>
+      <p class="listing__count">
+        {cards.length} {cards.length === 1 ? 'item' : 'items'}
+      </p>
+      <CardGrid label={label}>
+        {cards.map((card) => (
+          <li>
+            <ResourceCard {...card} />
+          </li>
+        ))}
+      </CardGrid>
+    </>
+  ) : (
+    <EmptyState title={emptyTitle} message={emptyMessage} action={emptyAction} />
+  )}
+</div>
+
+<style>
+  .listing {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .listing__count {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+</style>

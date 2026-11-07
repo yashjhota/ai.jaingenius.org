@@ -1,5 +1,5 @@
 ---
-import { SITE } from '../lib/site';
+import { SITE, cleanPath } from '../lib/site';
 
 export interface Props {
   title?: string;
@@ -19,7 +19,7 @@ const {
 } = Astro.props;
 
 const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} — ${SITE.endorsement}`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
+const canonical = new URL(cleanPath(Astro.url.pathname), Astro.site ?? SITE.url).href;
 const imageUrl = image ? new URL(image, Astro.site ?? SITE.url).href : undefined;
 ---
 

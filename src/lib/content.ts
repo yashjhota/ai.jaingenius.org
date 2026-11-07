@@ -2,7 +2,7 @@
  * The only way pages read content. Returns published entries only.
  * In Phase 2 this file can switch from local files to D1 without page changes.
  */
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import { isPublished, pickRelated, sortNewest, sortResources } from './resources';
 
 export type ResourceType = 'prompts' | 'templates' | 'assets' | 'tools' | 'festivals' | 'guides';
@@ -34,10 +34,11 @@ export async function getPublishedRefs<T extends ResourceType>(
 
 /** Published entries of the same type most related to `entry` by category and tags. */
 export async function getRelated<T extends ResourceType>(
+  type: T,
   entry: Resource<T>,
   limit = 3,
 ): Promise<Resource<T>[]> {
-  const pool = await getPublished(entry.collection as T);
+  const pool = await getPublished(type);
   return pickRelated(entry, pool, limit);
 }
 
@@ -45,4 +46,10 @@ export async function getRelated<T extends ResourceType>(
 export async function getRecent(types: readonly ResourceType[], limit = 6) {
   const all = (await Promise.all(types.map((t) => getPublished(t)))).flat();
   return sortNewest(all).slice(0, limit);
+}
+
+/** Renders an entry's Markdown body. Returns the <Content /> component. */
+export async function renderBody<T extends ResourceType>(entry: Resource<T>) {
+  const { Content } = await render(entry);
+  return Content;
 }

@@ -1,8 +1,8 @@
 ---
 import Logo from './Logo.astro';
-import { NAV } from '../lib/site';
+import { NAV, cleanPath } from '../lib/site';
 
-const current = Astro.url.pathname;
+const current = cleanPath(Astro.url.pathname);
 const isCurrent = (href: string) =>
   href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`);
 ---

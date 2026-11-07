@@ -21,4 +21,16 @@ export interface NavItem {
  * Primary navigation. Only add an item once its page exists, so the site has no
  * dead links (PRD §16 rule 12). Order follows PRD §6: Explore, Create, Learn, About.
  */
-export const NAV: NavItem[] = [];
+export const NAV: NavItem[] = [{ label: 'Prompts', href: '/prompts', group: 'explore' }];
+
+/**
+ * Public URL path for a page: "/prompts/x.html" → "/prompts/x", "/index.html" → "/".
+ * Pages build to .html files (astro.config.mjs) but are served without the extension.
+ */
+export function cleanPath(pathname: string): string {
+  const path = pathname
+    .replace(/\.html$/, '')
+    .replace(/\/index$/, '/')
+    .replace(/(.)\/$/, '$1');
+  return path === '' ? '/' : path;
+}

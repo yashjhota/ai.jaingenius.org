@@ -7,7 +7,8 @@ intendedTool: Any chat assistant
 language: [en]
 style: Simple, child-friendly
 religiousReviewStatus: pending
-status: draft
+status: published
+publishedAt: 2026-11-07
 createdAt: 2026-11-07
 ---
 

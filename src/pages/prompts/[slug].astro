@@ -1,0 +1,176 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Badge from '../../components/Badge.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import MetaList from '../../components/MetaList.astro';
+import TagList from '../../components/TagList.astro';
+import Notice from '../../components/Notice.astro';
+import CardGrid from '../../components/CardGrid.astro';
+import ResourceCard from '../../components/ResourceCard.astro';
+import { getPublished, getRelated, renderBody, type Resource } from '../../lib/content';
+import { promptCard, promptCategoryPath } from '../../lib/cards';
+import { formatDate } from '../../lib/format';
+import { LANGUAGE_LABELS, PROMPT_CATEGORY_LABELS } from '../../lib/taxonomy';
+
+export const getStaticPaths = (async () => {
+  const prompts = await getPublished('prompts');
+  return prompts.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: Resource<'prompts'> };
+const d = entry.data;
+const Content = await renderBody(entry);
+const related = await getRelated('prompts', entry, 3);
+const pending = d.religiousReviewStatus === 'pending';
+const categoryLabel = PROMPT_CATEGORY_LABELS[d.category];
+---
+
+<BaseLayout title={d.title} description={d.summary} type="article">
+  <PageHeader
+    title={d.title}
+    intro={d.summary}
+    breadcrumbs={[
+      { label: 'Prompt Library', href: '/prompts' },
+      { label: categoryLabel, href: promptCategoryPath(d.category) },
+      { label: d.title },
+    ]}
+  >
+    <div class="badges">
+      <Badge variant="prompt">Prompt</Badge>
+      {pending && (
+        <Badge variant="pending" title="Religious content not yet reviewed by an editor">
+          Pending review
+        </Badge>
+      )}
+    </div>
+  </PageHeader>
+
+  <div class="container page-section detail">
+    <section class="detail__main" aria-labelledby="prompt-heading">
+      <h2 id="prompt-heading">The prompt</h2>
+      <div id="prompt-text" class="prompt-box prose">
+        <Content />
+      </div>
+      <div class="detail__actions">
+        <CopyButton target="prompt-text" label="Copy prompt" copiedLabel="Prompt copied!" />
+      </div>
+
+      {pending && (
+        <Notice variant="warning" title="Not yet reviewed">
+          <p>
+            This prompt has not yet been reviewed by a Jain Genius editor. Please check any
+            religious names, symbols and details before you share what you create.
+          </p>
+        </Notice>
+      )}
+
+      <h2>How to use it</h2>
+      <ol class="steps">
+        <li>
+          Press <strong>Copy prompt</strong>, or select the text above and copy it.
+        </li>
+        <li>Open your AI tool and paste the prompt into the message box.</li>
+        <li>Replace anything in [SQUARE BRACKETS] with your own details.</li>
+        <li>Send it, then check the result carefully before sharing.</li>
+      </ol>
+      {d.referenceImageNotes && <Notice title="Tip">{d.referenceImageNotes}</Notice>}
+    </section>
+
+    <aside class="detail__side" aria-label="Prompt details">
+      <h2 class="detail__side-title">Details</h2>
+      <MetaList
+        items={[
+          {
+            label: 'Category',
+            value: categoryLabel,
+            href: promptCategoryPath(d.category),
+          },
+          d.intendedTool && { label: 'Works with', value: d.intendedTool },
+          {
+            label: d.language.length > 1 ? 'Languages' : 'Language',
+            value: d.language.map((l) => LANGUAGE_LABELS[l]).join(', '),
+          },
+          d.style && { label: 'Style', value: d.style },
+          d.aspectRatio && { label: 'Aspect ratio', value: d.aspectRatio },
+          d.publishedAt && { label: 'Added', value: formatDate(d.publishedAt) },
+          d.updatedAt && { label: 'Updated', value: formatDate(d.updatedAt) },
+        ]}
+      />
+      <TagList tags={d.tags} />
+    </aside>
+  </div>
+
+  {related.length > 0 && (
+    <section class="container page-section" aria-labelledby="related-heading">
+      <h2 id="related-heading">Related prompts</h2>
+      <CardGrid label="Related prompts">
+        {related.map((r) => (
+          <li>
+            <ResourceCard {...promptCard(r)} />
+          </li>
+        ))}
+      </CardGrid>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+  .detail {
+    display: grid;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  @media (min-width: 60rem) {
+    .detail {
+      grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+    }
+  }
+  .detail__main {
+    display: grid;
+    gap: var(--space-4);
+    min-width: 0;
+  }
+  .detail__main h2 {
+    font-size: var(--text-xl);
+    margin: var(--space-3) 0 0;
+  }
+  .prompt-box {
+    max-width: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--brand);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    font-size: var(--text-base);
+  }
+  .prompt-box :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .steps {
+    margin: 0;
+    padding-left: var(--space-5);
+  }
+  .steps li + li {
+    margin-top: var(--space-2);
+  }
+  .detail__side {
+    display: grid;
+    gap: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+  }
+  .detail__side-title {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+</style>

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addedDate,
+  countByCategory,
   displayName,
   isPublished,
   pickRelated,
@@ -102,5 +103,20 @@ describe('pickRelated', () => {
     ];
     expect(pickRelated(self, pool).map((e) => e.id)).toEqual(['strong', 'mid', 'weak']);
     expect(pickRelated(self, pool, 1).map((e) => e.id)).toEqual(['strong']);
+  });
+});
+
+describe('countByCategory', () => {
+  it('counts per category in taxonomy order and drops empty categories', () => {
+    const list = [
+      { data: { category: 'b' } },
+      { data: { category: 'a' } },
+      { data: { category: 'b' } },
+      { data: {} },
+    ];
+    expect(countByCategory(list, ['a', 'b', 'c'] as const)).toEqual([
+      { category: 'a', count: 1 },
+      { category: 'b', count: 2 },
+    ]);
   });
 });

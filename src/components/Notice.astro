@@ -1,0 +1,38 @@
+---
+/** Highlighted note, e.g. "not yet reviewed" or "check before sharing". */
+export interface Props {
+  variant?: 'warning' | 'info';
+  title?: string;
+}
+
+const { variant = 'info', title } = Astro.props;
+---
+
+<aside class:list={['notice', `notice--${variant}`]}>
+  {title && <p class="notice__title">{title}</p>}
+  <slot />
+</aside>
+
+<style>
+  .notice {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    border-left: 4px solid;
+  }
+  .notice :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .notice--info {
+    background: var(--surface);
+    border-color: var(--accent);
+  }
+  .notice--warning {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+    color: var(--warning-text);
+  }
+  .notice__title {
+    font-weight: 700;
+    margin-bottom: var(--space-1);
+  }
+</style>
