@@ -1,0 +1,28 @@
+---
+import { SITE } from '../lib/site';
+---
+
+<a class="logo" href="/" aria-label={`${SITE.name} ${SITE.endorsement}, home`}>
+  <span class="logo__name">{SITE.name}</span>
+  <span class="logo__by">{SITE.endorsement}</span>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1.1;
+    text-decoration: none;
+    color: var(--brand-strong);
+  }
+  .logo__name {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 700;
+  }
+  .logo__by {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+</style>

@@ -1,0 +1,111 @@
+---
+import Logo from './Logo.astro';
+import { NAV } from '../lib/site';
+
+const current = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`);
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <Logo />
+    {NAV.length > 0 && (
+      <nav aria-label="Primary">
+        <ul class="nav-list nav-list--desktop">
+          {NAV.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <details class="mobile-nav">
+          <summary>Menu</summary>
+          <ul class="nav-list">
+            {NAV.map((item) => (
+              <li>
+                <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      </nav>
+    )}
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 4rem;
+    padding-block: var(--space-2);
+  }
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-5);
+  }
+  .nav-list a {
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .nav-list a:hover,
+  .nav-list a[aria-current='page'] {
+    color: var(--brand);
+    text-decoration: underline;
+  }
+  /* Mobile menu uses <details>, so it works without JavaScript. */
+  .mobile-nav {
+    display: none;
+    position: relative;
+  }
+  .mobile-nav summary {
+    cursor: pointer;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding-inline: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+  }
+  .mobile-nav .nav-list {
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--space-2));
+    z-index: 50;
+    flex-direction: column;
+    gap: 0;
+    min-width: 12rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .mobile-nav .nav-list a {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+  }
+  @media (max-width: 48rem) {
+    .nav-list--desktop {
+      display: none;
+    }
+    .mobile-nav {
+      display: block;
+    }
+  }
+</style>

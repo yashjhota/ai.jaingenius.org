@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+
+// Sections planned for Phase 1. Shown as "Coming soon" without links until each page exists.
+const upcoming = [
+  {
+    title: 'Prompt Library',
+    text: 'Ready-to-copy AI prompts for Jain festivals, events and education.',
+  },
+  {
+    title: 'Templates',
+    text: 'Festival posters, invitations and social posts you can download and edit.',
+  },
+  {
+    title: 'Jain Digital Assets',
+    text: 'Symbols, borders and graphics with clear licence and attribution.',
+  },
+  {
+    title: 'AI Tools Directory',
+    text: 'Beginner-friendly guides to mainstream AI tools, with honest free-plan notes.',
+  },
+  {
+    title: 'Festivals & Occasions',
+    text: 'Reviewed festival information linked to matching prompts and templates.',
+  },
+  {
+    title: 'Learning Centre',
+    text: 'Short, practical tutorials for people with no design or technical background.',
+  },
+];
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="container">
+      <p class="hero__eyebrow">
+        {SITE.name} {SITE.endorsement}
+      </p>
+      <h1>{SITE.tagline}</h1>
+      <p class="hero__lead">
+        A free-first home for Jain-focused AI prompts, festival templates, digital assets and
+        practical guides, made for temple volunteers, youth groups, families, educators and
+        organisations.
+      </p>
+    </div>
+  </section>
+
+  <section class="container upcoming" aria-labelledby="upcoming-heading">
+    <h2 id="upcoming-heading">What we are building</h2>
+    <p class="upcoming__note">These sections are in preparation and will open here soon.</p>
+    <ul class="upcoming__grid">
+      {upcoming.map((item) => (
+        <li class="upcoming__card">
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+          <span class="upcoming__status">Coming soon</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    padding-block: var(--space-8) var(--space-7);
+  }
+  .hero__eyebrow {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: var(--text-sm);
+    color: var(--brand);
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-3);
+  }
+  .hero h1 {
+    max-width: 22ch;
+  }
+  .hero__lead {
+    max-width: 60ch;
+    font-size: var(--text-lg);
+    color: var(--text-muted);
+  }
+  .upcoming {
+    padding-top: var(--space-7);
+  }
+  .upcoming__note {
+    color: var(--text-muted);
+  }
+  .upcoming__grid {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-5) 0 0;
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  }
+  .upcoming__card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+  }
+  .upcoming__card h3 {
+    font-size: var(--text-lg);
+  }
+  .upcoming__card p {
+    color: var(--text-muted);
+  }
+  .upcoming__status {
+    display: inline-block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--brand-strong);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: var(--space-1) var(--space-3);
+  }
+</style>

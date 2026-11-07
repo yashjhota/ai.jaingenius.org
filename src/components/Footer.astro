@@ -1,0 +1,45 @@
+---
+import { SITE } from '../lib/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p>
+      <strong>{SITE.name}</strong>
+      {SITE.endorsement}. A free-first creativity and AI resource hub for the Jain community.
+    </p>
+    <p class="site-footer__meta">
+      © {year}
+      <a href={SITE.parentSite.url} target="_blank" rel="noopener noreferrer">
+        {SITE.parentSite.name}
+        <span class="visually-hidden"> (opens in a new tab)</span>
+      </a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-8);
+    background: var(--brand-strong);
+    color: var(--color-cream-200);
+    font-size: var(--text-sm);
+  }
+  .site-footer__inner {
+    padding-block: var(--space-6);
+  }
+  .site-footer strong {
+    color: var(--brand-contrast);
+  }
+  .site-footer a {
+    color: var(--color-gold-300);
+  }
+  .site-footer a:hover {
+    color: var(--brand-contrast);
+  }
+  .site-footer__meta {
+    margin: 0;
+  }
+</style>
