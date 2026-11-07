@@ -55,8 +55,16 @@ export function guideIssues(d: Base): RuleIssue[] {
   return baseIssues(d);
 }
 
+/** Applies to drafts too: every preview image needs alt text for screen readers. */
+export function previewIssues(previewImage: unknown, previewAlt?: string): RuleIssue[] {
+  return previewImage && !previewAlt?.trim()
+    ? [{ path: 'previewAlt', message: 'Preview images need alt text (previewAlt).' }]
+    : [];
+}
+
 export interface TemplateRuleInput extends Base {
   previewImage?: unknown;
+  previewAlt?: string | undefined;
   downloadUrl?: string | undefined;
   asset?: unknown;
   fileFormat: string[];
@@ -69,6 +77,7 @@ export function templateIssues(d: TemplateRuleInput): RuleIssue[] {
     ...baseIssues(d),
     ...requireFields({ ...d }, ['previewImage', 'fileFormat', 'licence']),
     ...licenceIssues(d.licence, d.attribution),
+    ...previewIssues(d.previewImage, d.previewAlt),
   ];
   if (isPublished(d) && !d.downloadUrl && !d.asset) {
     issues.push({
@@ -81,19 +90,29 @@ export function templateIssues(d: TemplateRuleInput): RuleIssue[] {
 
 export interface AssetRuleInput extends Base {
   file?: string | undefined;
+  previewImage?: unknown;
+  previewAlt?: string | undefined;
   fileType?: string | undefined;
-  fileSize?: number | undefined;
   licence?: Licence | undefined;
   source?: string | undefined;
   creator?: string | undefined;
   attribution?: string | undefined;
 }
 
+// File size is not required: local files are measured at build time (src/lib/files.ts).
 export function assetIssues(d: AssetRuleInput): RuleIssue[] {
   return [
     ...baseIssues(d),
-    ...requireFields({ ...d }, ['file', 'fileType', 'fileSize', 'licence', 'source', 'creator']),
+    ...requireFields({ ...d }, [
+      'file',
+      'previewImage',
+      'fileType',
+      'licence',
+      'source',
+      'creator',
+    ]),
     ...licenceIssues(d.licence, d.attribution),
+    ...previewIssues(d.previewImage, d.previewAlt),
   ];
 }
 

@@ -1,0 +1,120 @@
+---
+/**
+ * Everything a visitor should know before downloading (PRD §10.2):
+ * format, file size, dimensions, licence, attribution and source, then the button.
+ */
+import MetaList from './MetaList.astro';
+import Notice from './Notice.astro';
+import Badge from './Badge.astro';
+import type { DownloadInfo } from '../lib/files';
+import { formatFileSize } from '../lib/format';
+import {
+  ATTRIBUTION_REQUIRED,
+  LICENCE_LABELS,
+  LICENCE_SUMMARIES,
+  LICENCE_URLS,
+  type LicenceType,
+} from '../lib/taxonomy';
+
+export interface Props {
+  download: DownloadInfo;
+  /** Short format name for the button, e.g. "SVG". */
+  formatShort: string;
+  /** Longer format description for the details list. */
+  formatLabel: string;
+  dimensions?: string | undefined;
+  editableWith?: string | undefined;
+  licence: { type: LicenceType; url?: string | undefined; notes?: string | undefined };
+  attribution?: string | undefined;
+  creator?: string | undefined;
+  source?: string | undefined;
+}
+
+const {
+  download,
+  formatShort,
+  formatLabel,
+  dimensions,
+  editableWith,
+  licence,
+  attribution,
+  creator,
+  source,
+} = Astro.props;
+
+const size = download.size !== undefined ? formatFileSize(download.size) : undefined;
+const licenceUrl = licence.url ?? LICENCE_URLS[licence.type];
+const mustCredit = ATTRIBUTION_REQUIRED.includes(licence.type);
+const buttonLabel = `Download ${formatShort}${size ? ` (${size})` : ''}`;
+---
+
+<section class="download" aria-labelledby="download-heading">
+  <h2 id="download-heading" class="download__title">
+    Download
+  </h2>
+  <MetaList
+    label="File details"
+    items={[
+      { label: 'Format', value: formatLabel },
+      size && { label: 'File size', value: size },
+      dimensions && { label: 'Dimensions', value: dimensions },
+      editableWith && { label: 'Edit with', value: editableWith },
+      { label: 'Licence', value: LICENCE_LABELS[licence.type], href: licenceUrl },
+      creator && { label: 'Creator', value: creator },
+      source && { label: 'Source', value: source },
+    ]}
+  />
+  <p class="download__summary">
+    <strong>You may:</strong> {LICENCE_SUMMARIES[licence.type]}
+  </p>
+  {licence.notes && <p class="download__notes">{licence.notes}</p>}
+  {attribution && (
+    <Notice
+      variant={mustCredit ? 'warning' : 'info'}
+      title={mustCredit ? 'Credit required' : 'Credit'}
+    >
+      <p>{attribution}</p>
+    </Notice>
+  )}
+  {download.local ? (
+    <a class="button download__button" href={download.url} download={download.fileName}>
+      {buttonLabel}
+    </a>
+  ) : (
+    <a
+      class="button download__button"
+      href={download.url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {buttonLabel}
+      <span class="visually-hidden"> (opens an external site in a new tab)</span>
+      <span aria-hidden="true">↗</span>
+    </a>
+  )}
+  {!download.local && <Badge variant="external">Hosted on an external site</Badge>}
+</section>
+
+<style>
+  .download {
+    display: grid;
+    gap: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+  }
+  .download__title {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+  .download__summary,
+  .download__notes {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .download__button {
+    justify-content: center;
+  }
+</style>

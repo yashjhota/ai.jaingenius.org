@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ResourceListing from '../../components/ResourceListing.astro';
+import { getPublished } from '../../lib/content';
+import { assetCard, assetCategoryPath, categoryOptions } from '../../lib/cards';
+import { ASSET_CATEGORIES, ASSET_CATEGORY_LABELS } from '../../lib/taxonomy';
+
+const assets = await getPublished('assets');
+const options = categoryOptions(assets, ASSET_CATEGORIES, ASSET_CATEGORY_LABELS, assetCategoryPath);
+
+const title = 'Jain Digital Assets';
+const description =
+  'Icons, borders, patterns and backgrounds for Jain festival and community designs, each with clear licence and attribution details.';
+---
+
+<BaseLayout {title} {description}>
+  <PageHeader
+    {title}
+    eyebrow="Explore"
+    intro="Icons, borders, patterns and backgrounds to use in your own designs. Every file shows its licence, so you know how you may use it."
+    breadcrumbs={[{ label: title }]}
+  />
+  <ResourceListing
+    label="Assets"
+    cards={assets.map(assetCard)}
+    filter={{ allHref: '/assets', allCount: assets.length, options }}
+    emptyTitle="No assets yet"
+    emptyMessage="We are preparing our first assets. Please check back soon."
+    emptyAction={{ href: '/', label: 'Back to home' }}
+  />
+</BaseLayout>

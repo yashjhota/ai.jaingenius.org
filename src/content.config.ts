@@ -118,8 +118,9 @@ const assets = defineCollection({
         previewImage: image().optional(),
         previewAlt: z.string().optional(),
         fileType: z.enum(FILE_TYPES).optional(),
-        /** Bytes. */
+        /** Bytes. Only needed for external files; local files are measured at build. */
         fileSize: z.number().int().positive().optional(),
+        dimensions: z.string().optional(),
         licence: licence.optional(),
         source: z.string().optional(),
         attribution: z.string().optional(),

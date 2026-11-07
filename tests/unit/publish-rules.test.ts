@@ -3,6 +3,7 @@ import {
   assetIssues,
   festivalIssues,
   licenceIssues,
+  previewIssues,
   promptIssues,
   templateIssues,
   toolIssues,
@@ -27,13 +28,13 @@ describe('published entries', () => {
     expect(promptIssues({ status: 'published', publishedAt })).toEqual([]);
   });
 
-  it('assets need file details, licence, source and creator', () => {
+  it('assets need file, preview, type, licence, source and creator', () => {
     expect(paths(assetIssues({ status: 'published', publishedAt }))).toEqual([
       'creator',
       'file',
-      'fileSize',
       'fileType',
       'licence',
+      'previewImage',
       'source',
     ]);
   });
@@ -51,6 +52,7 @@ describe('published entries', () => {
         publishedAt,
         fileFormat: ['pdf'],
         previewImage: {},
+        previewAlt: 'Poster preview',
         asset: { id: 'x' },
         licence: { type: 'jain-genius-original' },
       }),
@@ -93,5 +95,21 @@ describe('licenceIssues', () => {
   it('does not require attribution for CC0 or no licence', () => {
     expect(licenceIssues({ type: 'CC0-1.0' })).toEqual([]);
     expect(licenceIssues(undefined)).toEqual([]);
+  });
+});
+
+describe('previewIssues', () => {
+  it('requires alt text whenever a preview image is set, even on drafts', () => {
+    expect(paths(previewIssues({}, undefined))).toEqual(['previewAlt']);
+    expect(paths(previewIssues({}, ' '))).toEqual(['previewAlt']);
+    expect(previewIssues({}, 'A lotus')).toEqual([]);
+    expect(previewIssues(undefined)).toEqual([]);
+  });
+
+  it('is applied to draft assets and templates', () => {
+    expect(paths(assetIssues({ status: 'draft', previewImage: {} }))).toEqual(['previewAlt']);
+    expect(paths(templateIssues({ status: 'draft', fileFormat: [], previewImage: {} }))).toEqual([
+      'previewAlt',
+    ]);
   });
 });

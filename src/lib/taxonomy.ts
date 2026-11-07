@@ -103,6 +103,37 @@ export const LICENCE_LABELS: Record<LicenceType, string> = {
   'jain-genius-original': 'Jain Genius original (free for community use)',
   'used-with-permission': 'Used with permission',
 };
+/** Plain-language summary of what a visitor may do with the file. */
+export const LICENCE_SUMMARIES: Record<LicenceType, string> = {
+  'CC0-1.0': 'Free to use for any purpose. No credit needed.',
+  'CC-BY-4.0': 'Free to use and adapt, including commercially, as long as you credit the creator.',
+  'CC-BY-SA-4.0':
+    'Free to use and adapt if you credit the creator and share your version under the same licence.',
+  'public-domain': 'No known copyright restrictions.',
+  'jain-genius-original':
+    'Free to use, adapt and share for personal, family, temple and community purposes. Please do not sell it, or present it as an official Jain Genius or temple logo.',
+  'used-with-permission':
+    "Shared here with the owner's permission. Check the notes before reusing it elsewhere.",
+};
+
+/** Official licence texts, used when an entry does not give its own licence link. */
+export const LICENCE_URLS: Partial<Record<LicenceType, string>> = {
+  'CC0-1.0': 'https://creativecommons.org/publicdomain/zero/1.0/',
+  'CC-BY-4.0': 'https://creativecommons.org/licenses/by/4.0/',
+  'CC-BY-SA-4.0': 'https://creativecommons.org/licenses/by-sa/4.0/',
+};
+
+export const FILE_TYPE_LABELS: Record<FileType, string> = {
+  svg: 'SVG (vector)',
+  png: 'PNG image',
+  jpg: 'JPG image',
+  webp: 'WebP image',
+  pdf: 'PDF',
+  pptx: 'PowerPoint',
+  docx: 'Word document',
+  zip: 'ZIP archive',
+};
+
 /** Licences that legally require visible attribution. */
 export const ATTRIBUTION_REQUIRED: readonly LicenceType[] = ['CC-BY-4.0', 'CC-BY-SA-4.0'];
 

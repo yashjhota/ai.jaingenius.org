@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Diya (lamp) icon</title>
+<!-- Original design by Jain AI (ai.jaingenius.org). See the download page for licence terms. -->
+<g transform="translate(256,430) scale(3.4)">
+  <path d="M0,-100 C18,-78 16,-56 0,-48 C-16,-56 -18,-78 0,-100Z" fill="#d9822b"/>
+  <path d="M0,-86 C9,-72 8,-60 0,-55 C-8,-60 -9,-72 0,-86Z" fill="#dcc488"/>
+  <path d="M-2,-48 L2,-48 L1.5,-36 L-1.5,-36Z" fill="#4e1119"/>
+  <path d="M-55,-38 Q0,-30 55,-38 Q48,4 0,6 Q-48,4 -55,-38Z" fill="#7a1f2b"/>
+  <path d="M-55,-38 Q0,-30 55,-38" fill="none" stroke="#b8913a" stroke-width="4"/>
+  <path d="M-30,-14 Q0,-8 30,-14" fill="none" stroke="#dcc488" stroke-width="3" stroke-linecap="round"/>
+</g>
+</svg>

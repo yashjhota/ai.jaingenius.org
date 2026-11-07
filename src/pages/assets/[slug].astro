@@ -1,0 +1,81 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Badge from '../../components/Badge.astro';
+import DownloadDetail from '../../components/DownloadDetail.astro';
+import { getPublished, getRelated, renderBody, type Resource } from '../../lib/content';
+import { resolveDownload } from '../../lib/files';
+import { assetCard, assetCategoryPath } from '../../lib/cards';
+import { ASSET_CATEGORY_LABELS, FILE_TYPE_LABELS } from '../../lib/taxonomy';
+
+export const getStaticPaths = (async () => {
+  const assets = await getPublished('assets');
+  return assets.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: Resource<'assets'> };
+const d = entry.data;
+
+// Publish rules guarantee these on published assets; fail loudly if not.
+if (!d.file || !d.fileType || !d.previewImage || !d.previewAlt || !d.licence) {
+  throw new Error(`Asset "${entry.id}" is missing its file, type, preview, alt text or licence.`);
+}
+
+const download = resolveDownload(d.file, { declaredSize: d.fileSize });
+const Content = await renderBody(entry);
+const related = await getRelated('assets', entry, 3);
+const categoryLabel = ASSET_CATEGORY_LABELS[d.category];
+const pending = d.religiousReviewStatus === 'pending';
+---
+
+<BaseLayout title={d.title} description={d.description} type="article">
+  <PageHeader
+    title={d.title}
+    intro={d.description}
+    breadcrumbs={[
+      { label: 'Jain Digital Assets', href: '/assets' },
+      { label: categoryLabel, href: assetCategoryPath(d.category) },
+      { label: d.title },
+    ]}
+  >
+    <div class="badges">
+      <Badge variant="asset">Asset</Badge>
+      <Badge variant="download">Download</Badge>
+      {pending && (
+        <Badge variant="pending" title="Not yet reviewed by an editor">
+          Pending review
+        </Badge>
+      )}
+    </div>
+  </PageHeader>
+  <DownloadDetail
+    preview={d.previewImage}
+    previewAlt={d.previewAlt}
+    pendingReview={pending}
+    tags={d.tags}
+    related={related.map(assetCard)}
+    relatedTitle="Related assets"
+    panel={{
+      download,
+      formatShort: d.fileType.toUpperCase(),
+      formatLabel: FILE_TYPE_LABELS[d.fileType],
+      dimensions: d.dimensions,
+      licence: d.licence,
+      attribution: d.attribution,
+      creator: d.creator,
+      source: d.source,
+    }}
+  >
+    <Content />
+  </DownloadDetail>
+</BaseLayout>
+
+<style>
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+</style>

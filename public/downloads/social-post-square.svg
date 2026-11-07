@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+<title>Social media post template (square)</title>
+<!-- Original design by Jain AI (ai.jaingenius.org). See the download page for licence terms. -->
+<defs>
+  <radialGradient id="glow" cx="50%" cy="42%" r="70%">
+    <stop offset="0" stop-color="#fffcf6"/>
+    <stop offset="0.65" stop-color="#fbf6ec"/>
+    <stop offset="1" stop-color="#f1e3c8"/>
+  </radialGradient>
+</defs>
+<rect width="1080" height="1080" fill="url(#glow)"/><rect x="40" y="40" width="1000" height="1000" fill="none" stroke="#b8913a" stroke-width="4" rx="6"/>
+<rect x="58" y="58" width="964" height="964" fill="none" stroke="#b8913a" stroke-width="1.5" rx="4" stroke-dasharray="2 8" stroke-linecap="round"/>
+<g transform="translate(40,58) rotate(135)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g><g transform="translate(1040,58) rotate(-135)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g><g transform="translate(40,1022) rotate(45)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g><g transform="translate(1040,1022) rotate(-45)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g>
+<g transform="translate(540,330) scale(1.7)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="0.8823529411764706"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="0.8823529411764706"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="0.8823529411764706"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="0.8823529411764706"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="0.8823529411764706"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="1.7647058823529411" stroke-linecap="round"/>
+</g>
+<text x="540" y="480" font-family="Georgia, 'Noto Serif', 'Times New Roman', serif" font-size="64" font-weight="700" fill="#4e1119" text-anchor="middle" letter-spacing="0">[Your message,]</text>
+<text x="540" y="570" font-family="Georgia, 'Noto Serif', 'Times New Roman', serif" font-size="64" font-weight="700" fill="#4e1119" text-anchor="middle" letter-spacing="0">[line two]</text>
+<text x="540" y="670" font-family="Georgia, 'Noto Serif', 'Times New Roman', serif" font-size="34" font-weight="400" fill="#7a1f2b" text-anchor="middle" letter-spacing="0">[A short supporting line]</text>
+<line x1="400" y1="840" x2="680" y2="840" stroke="#b8913a" stroke-width="2"/>
+<text x="540" y="905" font-family="'Segoe UI', 'Noto Sans', Arial, sans-serif" font-size="34" font-weight="600" fill="#7a1f2b" text-anchor="middle" letter-spacing="0">[@your_handle or group name]</text>
+</svg>

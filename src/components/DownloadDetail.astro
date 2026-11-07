@@ -1,0 +1,111 @@
+---
+/**
+ * Detail page body for downloadable resources (templates and assets):
+ * large preview and notes on the left, download panel on the right, related items below.
+ * The Markdown body goes in the default slot.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import DownloadPanel, { type Props as PanelProps } from './DownloadPanel.astro';
+import Notice from './Notice.astro';
+import TagList from './TagList.astro';
+import CardGrid from './CardGrid.astro';
+import ResourceCard, { type Props as CardProps } from './ResourceCard.astro';
+
+export interface Props {
+  preview: ImageMetadata;
+  previewAlt: string;
+  panel: PanelProps;
+  pendingReview: boolean;
+  tags: readonly string[];
+  related: readonly CardProps[];
+  relatedTitle: string;
+}
+
+const { preview, previewAlt, panel, pendingReview, tags, related, relatedTitle } = Astro.props;
+---
+
+<div class="container page-section detail">
+  <div class="detail__main">
+    <figure class="preview">
+      <Image
+        src={preview}
+        alt={previewAlt}
+        widths={[480, 720, 960]}
+        sizes="(min-width: 60rem) 40rem, 100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <figcaption>Preview. The download is the full-quality file.</figcaption>
+    </figure>
+    {pendingReview && (
+      <Notice variant="warning" title="Not yet reviewed">
+        <p>
+          This design has not yet been reviewed by a Jain Genius editor. Please check that it suits
+          your occasion before you share it.
+        </p>
+      </Notice>
+    )}
+    <div class="prose">
+      <slot />
+    </div>
+    <TagList tags={tags} />
+  </div>
+  <aside class="detail__side" aria-label="Download">
+    <DownloadPanel {...panel} />
+  </aside>
+</div>
+
+{related.length > 0 && (
+  <section class="container page-section" aria-labelledby="related-heading">
+    <h2 id="related-heading">{relatedTitle}</h2>
+    <CardGrid label={relatedTitle}>
+      {related.map((card) => (
+        <li>
+          <ResourceCard {...card} />
+        </li>
+      ))}
+    </CardGrid>
+  </section>
+)}
+
+<style>
+  .detail {
+    display: grid;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  @media (min-width: 60rem) {
+    .detail {
+      grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+    }
+    .detail__side {
+      position: sticky;
+      top: var(--space-5);
+    }
+  }
+  .detail__main {
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .preview {
+    margin: 0;
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+  }
+  .preview img {
+    margin-inline: auto;
+    max-height: 70vh;
+    width: auto;
+    box-shadow: var(--shadow-sm);
+  }
+  .preview figcaption {
+    margin-top: var(--space-3);
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+</style>

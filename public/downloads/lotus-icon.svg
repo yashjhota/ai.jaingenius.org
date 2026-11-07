@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Lotus icon</title>
+<!-- Original design by Jain AI (ai.jaingenius.org). See the download page for licence terms. -->
+<g transform="translate(256,380) scale(3)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="1" stroke-linecap="round"/>
+</g>
+</svg>

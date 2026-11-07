@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+<title>Lotus pattern tile (seamless)</title>
+<!-- Original design by Jain AI (ai.jaingenius.org). See the download page for licence terms. -->
+<rect width="200" height="200" fill="#fbf6ec"/>
+<g opacity="0.55"><g transform="translate(100,112) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g><g transform="translate(0,12) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g><g transform="translate(200,12) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g><g transform="translate(0,212) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g><g transform="translate(200,212) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="none" stroke="#b8913a" stroke-width="4.782608695652174"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g>
+<g fill="#dcc488"><circle cx="0" cy="100" r="3"/><circle cx="200" cy="100" r="3"/><circle cx="100" cy="0" r="3"/><circle cx="100" cy="200" r="3"/></g>
+</svg>

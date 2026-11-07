@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ResourceListing from '../../../components/ResourceListing.astro';
+import { getPublished } from '../../../lib/content';
+import { countByCategory } from '../../../lib/resources';
+import { assetCard, assetCategoryPath, categoryOptions } from '../../../lib/cards';
+import { ASSET_CATEGORIES, ASSET_CATEGORY_LABELS, type AssetCategory } from '../../../lib/taxonomy';
+
+// Only categories with at least one published asset get a page.
+export const getStaticPaths = (async () => {
+  const assets = await getPublished('assets');
+  return countByCategory(assets, ASSET_CATEGORIES).map(({ category }) => ({
+    params: { category },
+  }));
+}) satisfies GetStaticPaths;
+
+const category = Astro.params.category as AssetCategory;
+const assets = await getPublished('assets');
+const inCategory = assets.filter((a) => a.data.category === category);
+const options = categoryOptions(assets, ASSET_CATEGORIES, ASSET_CATEGORY_LABELS, assetCategoryPath);
+
+const label = ASSET_CATEGORY_LABELS[category];
+const title = `${label} — Jain Digital Assets`;
+const description = `${label} for Jain festival and community designs, with clear licence details.`;
+---
+
+<BaseLayout {title} {description}>
+  <PageHeader
+    title={label}
+    eyebrow="Jain Digital Assets"
+    intro={description}
+    breadcrumbs={[{ label: 'Jain Digital Assets', href: '/assets' }, { label }]}
+  />
+  <ResourceListing
+    label={label}
+    cards={inCategory.map(assetCard)}
+    filter={{
+      allHref: '/assets',
+      allCount: assets.length,
+      options,
+      currentHref: assetCategoryPath(category),
+    }}
+    emptyTitle="No assets in this category yet"
+    emptyMessage="Browse all assets instead."
+    emptyAction={{ href: '/assets', label: 'See all assets' }}
+  />
+</BaseLayout>

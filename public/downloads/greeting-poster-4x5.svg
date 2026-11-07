@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+<title>Greeting poster template (4:5)</title>
+<!-- Original design by Jain AI (ai.jaingenius.org). See the download page for licence terms. -->
+<defs>
+  <radialGradient id="glow" cx="50%" cy="42%" r="70%">
+    <stop offset="0" stop-color="#fffcf6"/>
+    <stop offset="0.65" stop-color="#fbf6ec"/>
+    <stop offset="1" stop-color="#f1e3c8"/>
+  </radialGradient>
+</defs>
+<rect width="1080" height="1350" fill="url(#glow)"/><g stroke="#dcc488" stroke-width="2" opacity="0.55" stroke-linecap="round"><line x1="749.0" y1="700.0" x2="920.0" y2="700.0"/><line x1="741.9" y1="754.1" x2="907.1" y2="798.4"/><line x1="721.0" y1="804.5" x2="869.1" y2="890.0"/><line x1="687.8" y1="847.8" x2="808.7" y2="968.7"/><line x1="644.5" y1="881.0" x2="730.0" y2="1029.1"/><line x1="594.1" y1="901.9" x2="638.4" y2="1067.1"/><line x1="540.0" y1="909.0" x2="540.0" y2="1080.0"/><line x1="485.9" y1="901.9" x2="441.6" y2="1067.1"/><line x1="435.5" y1="881.0" x2="350.0" y2="1029.1"/><line x1="392.2" y1="847.8" x2="271.3" y2="968.7"/><line x1="359.0" y1="804.5" x2="210.9" y2="890.0"/><line x1="338.1" y1="754.1" x2="172.9" y2="798.4"/><line x1="331.0" y1="700.0" x2="160.0" y2="700.0"/><line x1="338.1" y1="645.9" x2="172.9" y2="601.6"/><line x1="359.0" y1="595.5" x2="210.9" y2="510.0"/><line x1="392.2" y1="552.2" x2="271.3" y2="431.3"/><line x1="435.5" y1="519.0" x2="350.0" y2="370.9"/><line x1="485.9" y1="498.1" x2="441.6" y2="332.9"/><line x1="540.0" y1="491.0" x2="540.0" y2="320.0"/><line x1="594.1" y1="498.1" x2="638.4" y2="332.9"/><line x1="644.5" y1="519.0" x2="730.0" y2="370.9"/><line x1="687.8" y1="552.2" x2="808.7" y2="431.3"/><line x1="721.0" y1="595.5" x2="869.1" y2="510.0"/><line x1="741.9" y1="645.9" x2="907.1" y2="601.6"/></g><rect x="40" y="40" width="1000" height="1270" fill="none" stroke="#b8913a" stroke-width="4" rx="6"/>
+<rect x="58" y="58" width="964" height="1234" fill="none" stroke="#b8913a" stroke-width="1.5" rx="4" stroke-dasharray="2 8" stroke-linecap="round"/>
+<g transform="translate(40,58) rotate(135)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g><g transform="translate(1040,58) rotate(-135)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g><g transform="translate(40,1292) rotate(45)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g><g transform="translate(1040,1292) rotate(-45)"><g transform="translate(0,0) scale(0.46)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="3.260869565217391"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="6.521739130434782" stroke-linecap="round"/>
+</g></g>
+<text x="540" y="250" font-family="Georgia, 'Noto Serif', 'Times New Roman', serif" font-size="76" font-weight="700" fill="#4e1119" text-anchor="middle" letter-spacing="0">[Your greeting]</text>
+<text x="540" y="320" font-family="Georgia, 'Noto Serif', 'Times New Roman', serif" font-size="34" font-weight="400" fill="#7a1f2b" text-anchor="middle" letter-spacing="0">[A short line of good wishes]</text>
+<g transform="translate(540,860) scale(3)">
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(-72)" fill="#dcc488" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-70 C26,-43.4 26,-15.4 0,0 C-26,-15.4 -26,-43.4 0,-70Z" transform="rotate(72)" fill="#dcc488" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(-38)" fill="#d9822b" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-84 C26,-52.08 26,-18.48 0,0 C-26,-18.48 -26,-52.08 0,-84Z" transform="rotate(38)" fill="#d9822b" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M0,-100 C27,-62 27,-22 0,0 C-27,-22 -27,-62 0,-100Z" fill="#7a1f2b" stroke="#fffcf6" stroke-width="0.5"/>
+  <path d="M-48,4 Q0,22 48,4" fill="none" stroke="#b8913a" stroke-width="1" stroke-linecap="round"/>
+</g>
+<line x1="380" y1="1080" x2="700" y2="1080" stroke="#b8913a" stroke-width="2"/>
+<text x="540" y="1150" font-family="Georgia, 'Noto Serif', 'Times New Roman', serif" font-size="40" font-weight="600" fill="#7a1f2b" text-anchor="middle" letter-spacing="0">[Family or organisation name]</text>
+</svg>

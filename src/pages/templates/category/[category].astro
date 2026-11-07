@@ -1,0 +1,58 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ResourceListing from '../../../components/ResourceListing.astro';
+import { getPublished } from '../../../lib/content';
+import { countByCategory } from '../../../lib/resources';
+import { categoryOptions, templateCard, templateCategoryPath } from '../../../lib/cards';
+import {
+  TEMPLATE_CATEGORIES,
+  TEMPLATE_CATEGORY_LABELS,
+  type TemplateCategory,
+} from '../../../lib/taxonomy';
+
+// Only categories with at least one published template get a page.
+export const getStaticPaths = (async () => {
+  const templates = await getPublished('templates');
+  return countByCategory(templates, TEMPLATE_CATEGORIES).map(({ category }) => ({
+    params: { category },
+  }));
+}) satisfies GetStaticPaths;
+
+const category = Astro.params.category as TemplateCategory;
+const templates = await getPublished('templates');
+const inCategory = templates.filter((t) => t.data.category === category);
+const options = categoryOptions(
+  templates,
+  TEMPLATE_CATEGORIES,
+  TEMPLATE_CATEGORY_LABELS,
+  templateCategoryPath,
+);
+
+const label = TEMPLATE_CATEGORY_LABELS[category];
+const title = `${label} templates`;
+const description = `Free, editable ${label.toLowerCase()} templates for the Jain community.`;
+---
+
+<BaseLayout {title} {description}>
+  <PageHeader
+    {title}
+    eyebrow="Template Library"
+    intro={description}
+    breadcrumbs={[{ label: 'Template Library', href: '/templates' }, { label }]}
+  />
+  <ResourceListing
+    label={title}
+    cards={inCategory.map(templateCard)}
+    filter={{
+      allHref: '/templates',
+      allCount: templates.length,
+      options,
+      currentHref: templateCategoryPath(category),
+    }}
+    emptyTitle="No templates in this category yet"
+    emptyMessage="Browse all templates instead."
+    emptyAction={{ href: '/templates', label: 'See all templates' }}
+  />
+</BaseLayout>

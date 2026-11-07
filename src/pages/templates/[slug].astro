@@ -1,0 +1,91 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Badge from '../../components/Badge.astro';
+import DownloadDetail from '../../components/DownloadDetail.astro';
+import { getBySlug, getPublished, getRelated, renderBody, type Resource } from '../../lib/content';
+import { resolveDownload } from '../../lib/files';
+import { assetCard, templateCard, templateCategoryPath } from '../../lib/cards';
+import { FILE_TYPE_LABELS, TEMPLATE_CATEGORY_LABELS } from '../../lib/taxonomy';
+
+export const getStaticPaths = (async () => {
+  const templates = await getPublished('templates');
+  return templates.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: Resource<'templates'> };
+const d = entry.data;
+
+// Publish rules guarantee these on published templates; fail loudly if not.
+if (!d.previewImage || !d.previewAlt || !d.licence) {
+  throw new Error(`Template "${entry.id}" is missing its preview, alt text or licence.`);
+}
+
+// Download either the template's own file or its linked asset's file.
+const linkedAsset = d.asset ? await getBySlug('assets', d.asset.id) : undefined;
+const downloadUrl = d.downloadUrl ?? linkedAsset?.data.file;
+if (!downloadUrl) {
+  throw new Error(`Template "${entry.id}" has no download (or its linked asset is not published).`);
+}
+const download = resolveDownload(downloadUrl, { declaredSize: linkedAsset?.data.fileSize });
+
+const Content = await renderBody(entry);
+const related = await getRelated('templates', entry, 3);
+const categoryLabel = TEMPLATE_CATEGORY_LABELS[d.category];
+const pending = d.religiousReviewStatus === 'pending';
+const relatedCards = [
+  ...related.map(templateCard),
+  ...(linkedAsset ? [assetCard(linkedAsset)] : []),
+];
+---
+
+<BaseLayout title={d.title} description={d.description} type="article">
+  <PageHeader
+    title={d.title}
+    intro={d.description}
+    breadcrumbs={[
+      { label: 'Template Library', href: '/templates' },
+      { label: categoryLabel, href: templateCategoryPath(d.category) },
+      { label: d.title },
+    ]}
+  >
+    <div class="badges">
+      <Badge variant="template">Template</Badge>
+      <Badge variant="download">Download</Badge>
+      {pending && (
+        <Badge variant="pending" title="Not yet reviewed by an editor">
+          Pending review
+        </Badge>
+      )}
+    </div>
+  </PageHeader>
+  <DownloadDetail
+    preview={d.previewImage}
+    previewAlt={d.previewAlt}
+    pendingReview={pending}
+    tags={d.tags}
+    related={relatedCards}
+    relatedTitle="Related templates"
+    panel={{
+      download,
+      formatShort: d.fileFormat.map((f) => f.toUpperCase()).join(', '),
+      formatLabel: d.fileFormat.map((f) => FILE_TYPE_LABELS[f]).join(', '),
+      dimensions: d.dimensions,
+      editableWith: d.editableWith,
+      licence: d.licence,
+      attribution: d.attribution,
+    }}
+  >
+    <Content />
+  </DownloadDetail>
+</BaseLayout>
+
+<style>
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+</style>

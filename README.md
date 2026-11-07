@@ -11,7 +11,7 @@ This is an independent project. It does not share code with the main jaingenius.
 | Phase                   | State                        |
 | ----------------------- | ---------------------------- |
 | 0 — Project foundation  | Done                         |
-| 1 — Public Resource Hub | In progress (M1.1–M1.3 done) |
+| 1 — Public Resource Hub | In progress (M1.1–M1.4 done) |
 | 2+ — CMS, builders, AI  | Not started                  |
 
 ## Requirements
@@ -29,18 +29,19 @@ npm run dev     # local dev server at http://localhost:4321
 
 ## Scripts
 
-| Script                 | What it does                                      |
-| ---------------------- | ------------------------------------------------- |
-| `npm run dev`          | Start the local dev server                        |
-| `npm run build`        | Type-check (`astro check`), then build to `dist/` |
-| `npm run preview`      | Serve the built `dist/` locally                   |
-| `npm run check`        | Type-check Astro and TypeScript files only        |
-| `npm run lint`         | Run ESLint                                        |
-| `npm run format`       | Format all files with Prettier                    |
-| `npm run format:check` | Check formatting without changing files           |
-| `npm run test`         | Run unit tests (Vitest) once                      |
-| `npm run test:watch`   | Run unit tests in watch mode                      |
-| `npm run deploy`       | Build, then deploy to Cloudflare with Wrangler    |
+| Script                 | What it does                                        |
+| ---------------------- | --------------------------------------------------- |
+| `npm run dev`          | Start the local dev server                          |
+| `npm run build`        | Type-check (`astro check`), then build to `dist/`   |
+| `npm run preview`      | Serve the built `dist/` locally                     |
+| `npm run check`        | Type-check Astro and TypeScript files only          |
+| `npm run lint`         | Run ESLint                                          |
+| `npm run format`       | Format all files with Prettier                      |
+| `npm run format:check` | Check formatting without changing files             |
+| `npm run test`         | Run unit tests (Vitest) once                        |
+| `npm run previews`     | Render PNG previews for SVGs in `public/downloads/` |
+| `npm run test:watch`   | Run unit tests in watch mode                        |
+| `npm run deploy`       | Build, then deploy to Cloudflare with Wrangler      |
 
 Before every commit, run:
 `npm run check && npm run lint && npm run format:check && npm test && npm run build`.
@@ -76,6 +77,18 @@ what visitors rely on (`src/lib/publish-rules.ts`):
 
 Religious content (prompts, templates, assets, festivals) carries `religiousReviewStatus`.
 Leave it `pending` until a knowledgeable reviewer approves it.
+
+**Templates and assets (downloads).**
+
+1. Put the downloadable file in `public/downloads/` (keep files small; large files move to R2
+   in Phase 2).
+2. For SVG files, run `npm run previews` to create a PNG preview in `src/assets/previews/`.
+   For other formats, add a PNG or JPG preview there yourself.
+3. Create the Markdown entry with `downloadUrl` (templates) or `file` (assets),
+   `previewImage: ../../assets/previews/<name>.png`, `previewAlt`, and a `licence`.
+
+File sizes are read from the file at build time. If a download file is missing, the build fails.
+Every preview needs `previewAlt` text.
 
 Pages read content only through `src/lib/content.ts` (`getPublished`, `getBySlug`,
 `getRelated`, `getRecent`, `getPublishedRefs`), which returns published entries only.

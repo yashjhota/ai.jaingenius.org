@@ -21,7 +21,11 @@ export interface NavItem {
  * Primary navigation. Only add an item once its page exists, so the site has no
  * dead links (PRD §16 rule 12). Order follows PRD §6: Explore, Create, Learn, About.
  */
-export const NAV: NavItem[] = [{ label: 'Prompts', href: '/prompts', group: 'explore' }];
+export const NAV: NavItem[] = [
+  { label: 'Prompts', href: '/prompts', group: 'explore' },
+  { label: 'Templates', href: '/templates', group: 'explore' },
+  { label: 'Assets', href: '/assets', group: 'explore' },
+];
 
 /**
  * Public URL path for a page: "/prompts/x.html" → "/prompts/x", "/index.html" → "/".
