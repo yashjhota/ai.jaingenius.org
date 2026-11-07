@@ -18,7 +18,7 @@
 7. No placeholder buttons or dead links. Add a nav item to `src/lib/site.ts` only once its page
    exists. Label unfinished features "Coming soon" without a link.
 8. Core pages must work for reading and navigation without client-side JavaScript.
-9. After every change, run `npm run check && npm run lint && npm run format:check && npm run build`
+9. After every change, run `npm run check && npm run lint && npm run format:check && npm test && npm run build`
    and fix failures. Do not suppress them. Add tests for non-trivial logic.
 10. Report files changed, commands run, results, known limitations and the next milestone.
 11. Keep `PRD.md`, `README.md`, schemas and code aligned. If a requirement changes, propose a
@@ -29,6 +29,10 @@
 - Astro + TypeScript strict. Static output. React only for interactive islands.
 - Styling: CSS custom properties in `src/styles/tokens.css`, component-scoped `<style>`. No
   Tailwind. Gold (`--accent`) is an accent only, never body text.
+- Pages read content only through `src/lib/content.ts` (never `getCollection` directly), so
+  Phase 2 can swap the source to D1. Keep logic in `src/lib/resources.ts` and unit-test it.
+- New categories, licences or traditions go in `src/lib/taxonomy.ts`. Publish requirements go
+  in `src/lib/publish-rules.ts`, with tests.
 - Every page uses `BaseLayout` and passes a unique `title` and `description`.
 - External links that open a new tab use `rel="noopener noreferrer"` and say so to screen
   readers.

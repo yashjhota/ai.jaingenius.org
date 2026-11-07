@@ -8,11 +8,11 @@ This is an independent project. It does not share code with the main jaingenius.
 
 ## Status
 
-| Phase                   | State       |
-| ----------------------- | ----------- |
-| 0 — Project foundation  | Done        |
-| 1 — Public Resource Hub | Next        |
-| 2+ — CMS, builders, AI  | Not started |
+| Phase                   | State                                   |
+| ----------------------- | --------------------------------------- |
+| 0 — Project foundation  | Done                                    |
+| 1 — Public Resource Hub | In progress (M1.1 content schemas done) |
+| 2+ — CMS, builders, AI  | Not started                             |
 
 ## Requirements
 
@@ -38,9 +38,47 @@ npm run dev     # local dev server at http://localhost:4321
 | `npm run lint`         | Run ESLint                                        |
 | `npm run format`       | Format all files with Prettier                    |
 | `npm run format:check` | Check formatting without changing files           |
+| `npm run test`         | Run unit tests (Vitest) once                      |
+| `npm run test:watch`   | Run unit tests in watch mode                      |
 | `npm run deploy`       | Build, then deploy to Cloudflare with Wrangler    |
 
-Before every commit, run: `npm run check && npm run lint && npm run format:check && npm run build`.
+Before every commit, run:
+`npm run check && npm run lint && npm run format:check && npm test && npm run build`.
+
+## Adding content
+
+Content lives in `src/content/<type>/` as Markdown files. The filename becomes the URL slug,
+for example `src/content/prompts/paryushan-greeting-poster.md` → `/prompts/paryushan-greeting-poster`.
+Files starting with `_` are ignored.
+
+| Folder       | Type                | Markdown body holds              |
+| ------------ | ------------------- | -------------------------------- |
+| `prompts/`   | Prompt              | The prompt text visitors copy    |
+| `templates/` | Template            | Extra details and how to edit    |
+| `assets/`    | Digital asset       | Extra details and usage notes    |
+| `tools/`     | AI tool             | How to get started with the tool |
+| `festivals/` | Festival / occasion | Significance and observances     |
+| `guides/`    | Learning guide      | The tutorial                     |
+
+Fields are defined and validated in `src/content.config.ts`. Allowed categories, licences and
+traditions are in `src/lib/taxonomy.ts`. A bad value fails the build.
+
+**Draft vs published.** New entries default to `status: draft` and never appear on the site.
+Drafts may be incomplete. Setting `status: published` makes the build check that the entry has
+what visitors rely on (`src/lib/publish-rules.ts`):
+
+- Every type: `publishedAt`.
+- Templates: preview image, file format, licence, and a download link or linked asset.
+- Assets: file, file type, file size, licence, source and creator.
+- AI tools: `accountRequired`, `lastVerifiedAt` and `reviewedBy`.
+- Festivals: at least one entry in `dateSources` and `lastDateVerifiedAt`.
+- CC BY / CC BY-SA licences always need an `attribution` line.
+
+Religious content (prompts, templates, assets, festivals) carries `religiousReviewStatus`.
+Leave it `pending` until a knowledgeable reviewer approves it.
+
+Pages read content only through `src/lib/content.ts` (`getPublished`, `getBySlug`,
+`getRelated`, `getRecent`, `getPublishedRefs`), which returns published entries only.
 
 ## Project structure
 
@@ -48,9 +86,17 @@ Before every commit, run: `npm run check && npm run lint && npm run format:check
 public/              Static files copied as-is (favicon, robots.txt, small approved assets)
 src/components/      Shared Astro components (React only for interactive islands, later)
 src/layouts/         Page layouts (BaseLayout handles SEO meta, header, footer)
+src/content/         Content entries (Markdown), one folder per type
+src/content.config.ts  Content schemas and publish rules wiring
 src/lib/site.ts      Site name, tagline and navigation (add nav items only when pages exist)
+src/lib/content.ts   Data layer used by pages (published entries only)
+src/lib/resources.ts Sorting, filtering and "related" logic (plain TypeScript, unit-tested)
+src/lib/publish-rules.ts  What an entry needs before it can be published
+src/lib/taxonomy.ts  Allowed categories, licences, traditions and their labels
+src/lib/format.ts    Date and file-size formatting
 src/pages/           Routes (file-based)
 src/styles/          Design tokens (tokens.css) and global styles
+tests/unit/          Vitest unit tests
 astro.config.mjs     Astro config (static output, MDX, sitemap)
 wrangler.jsonc       Cloudflare Workers Static Assets config
 ```
