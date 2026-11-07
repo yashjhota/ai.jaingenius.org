@@ -3,9 +3,12 @@ import type { Props as CardProps } from '../components/ResourceCard.astro';
 import type { CategoryOption } from '../components/CategoryFilter.astro';
 import type { Resource } from './content';
 import { countByCategory } from './resources';
+import { formatDate } from './format';
 import {
   ASSET_CATEGORY_LABELS,
   FILE_TYPE_LABELS,
+  FREE_PLAN_LABELS,
+  TOOL_CATEGORY_LABELS,
   LANGUAGE_LABELS,
   PROMPT_CATEGORY_LABELS,
   TEMPLATE_CATEGORY_LABELS,
@@ -17,6 +20,8 @@ export const templatePath = (slug: string) => `/templates/${slug}`;
 export const templateCategoryPath = (category: string) => `/templates/category/${category}`;
 export const assetPath = (slug: string) => `/assets/${slug}`;
 export const assetCategoryPath = (category: string) => `/assets/category/${category}`;
+export const toolPath = (slug: string) => `/tools/${slug}`;
+export const toolCategoryPath = (category: string) => `/tools/category/${category}`;
 
 /** Filter options for the categories that have entries, in taxonomy order. */
 export function categoryOptions<C extends string>(
@@ -83,5 +88,21 @@ export function assetCard(entry: Resource<'assets'>): CardProps {
     meta: [ASSET_CATEGORY_LABELS[d.category], d.fileType?.toUpperCase(), d.dimensions].filter(
       (m): m is string => Boolean(m),
     ),
+  };
+}
+
+export function toolCard(entry: Resource<'tools'>): CardProps {
+  const d = entry.data;
+  return {
+    href: toolPath(entry.id),
+    title: d.name,
+    summary: d.description,
+    typeLabel: 'AI tool',
+    typeVariant: 'tool',
+    meta: [
+      TOOL_CATEGORY_LABELS[d.category],
+      FREE_PLAN_LABELS[d.freePlanStatus],
+      d.lastVerifiedAt && `Checked ${formatDate(d.lastVerifiedAt)}`,
+    ].filter((m): m is string => Boolean(m)),
   };
 }

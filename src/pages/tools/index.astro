@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ResourceListing from '../../components/ResourceListing.astro';
+import Notice from '../../components/Notice.astro';
+import { getPublished } from '../../lib/content';
+import { categoryOptions, toolCard, toolCategoryPath } from '../../lib/cards';
+import { TOOL_CATEGORIES, TOOL_CATEGORY_LABELS } from '../../lib/taxonomy';
+
+const tools = await getPublished('tools');
+const options = categoryOptions(tools, TOOL_CATEGORIES, TOOL_CATEGORY_LABELS, toolCategoryPath);
+
+const title = 'AI Tools Directory';
+const description =
+  'Beginner-friendly guides to mainstream AI tools for Jain community content, with honest free-plan notes and the date we last checked them.';
+---
+
+<BaseLayout {title} {description}>
+  <PageHeader
+    {title}
+    eyebrow="Explore"
+    intro="Beginner-friendly guides to mainstream AI tools, with what each is good for and an honest note on its free plan."
+    breadcrumbs={[{ label: title }]}
+  />
+  <div class="container disclaimer">
+    <Notice title="About these listings">
+      <p>
+        Jain AI is not connected to these companies and is not paid to list them. Free plans and
+        limits change often, so each tool shows the date we last checked its official website.
+        Always check the official site before you rely on a feature.
+      </p>
+    </Notice>
+  </div>
+  <ResourceListing
+    label="AI tools"
+    cards={tools.map(toolCard)}
+    filter={{ allHref: '/tools', allCount: tools.length, options }}
+    emptyTitle="No tools listed yet"
+    emptyMessage="We are checking our first AI tools. Please check back soon."
+    emptyAction={{ href: '/', label: 'Back to home' }}
+  />
+</BaseLayout>
+
+<style>
+  .disclaimer {
+    padding-top: var(--space-6);
+  }
+</style>

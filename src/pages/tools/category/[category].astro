@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import ResourceListing from '../../../components/ResourceListing.astro';
+import { getPublished } from '../../../lib/content';
+import { countByCategory } from '../../../lib/resources';
+import { categoryOptions, toolCard, toolCategoryPath } from '../../../lib/cards';
+import { TOOL_CATEGORIES, TOOL_CATEGORY_LABELS, type ToolCategory } from '../../../lib/taxonomy';
+
+// Only categories with at least one published tool get a page.
+export const getStaticPaths = (async () => {
+  const tools = await getPublished('tools');
+  return countByCategory(tools, TOOL_CATEGORIES).map(({ category }) => ({
+    params: { category },
+  }));
+}) satisfies GetStaticPaths;
+
+const category = Astro.params.category as ToolCategory;
+const tools = await getPublished('tools');
+const inCategory = tools.filter((t) => t.data.category === category);
+const options = categoryOptions(tools, TOOL_CATEGORIES, TOOL_CATEGORY_LABELS, toolCategoryPath);
+
+const label = TOOL_CATEGORY_LABELS[category];
+const title = `${label} — AI Tools`;
+const description = `Beginner-friendly guides to ${label.toLowerCase()} AI tools, with honest free-plan notes.`;
+---
+
+<BaseLayout {title} {description}>
+  <PageHeader
+    title={label}
+    eyebrow="AI Tools Directory"
+    intro={description}
+    breadcrumbs={[{ label: 'AI Tools Directory', href: '/tools' }, { label }]}
+  />
+  <ResourceListing
+    {label}
+    cards={inCategory.map(toolCard)}
+    filter={{
+      allHref: '/tools',
+      allCount: tools.length,
+      options,
+      currentHref: toolCategoryPath(category),
+    }}
+    emptyTitle="No tools in this category yet"
+    emptyMessage="Browse all tools instead."
+    emptyAction={{ href: '/tools', label: 'See all tools' }}
+  />
+</BaseLayout>

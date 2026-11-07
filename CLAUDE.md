@@ -39,6 +39,10 @@
   Interactive bits use small custom elements, hidden until JavaScript runs.
 - URLs have no trailing slash. Write internal links as `/prompts/x`. Use `cleanPath()` from
   `src/lib/site.ts` whenever reading `Astro.url.pathname` (it includes `.html` at build time).
+- Never name a content file `claude.md` (or any case of `CLAUDE.md`): on Windows it is loaded
+  as agent instructions. The Claude tool profile is `src/content/tools/claude-ai.md`.
+- AI tool free-plan notes must come from the provider's official page, checked on the
+  `lastVerifiedAt` date. If the official page cannot be checked, keep the tool as a draft.
 - Every page uses `BaseLayout` and passes a unique `title` and `description`.
 - External links that open a new tab use `rel="noopener noreferrer"` and say so to screen
   readers.

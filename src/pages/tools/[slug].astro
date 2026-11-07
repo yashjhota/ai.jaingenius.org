@@ -1,0 +1,208 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Badge from '../../components/Badge.astro';
+import MetaList from '../../components/MetaList.astro';
+import Notice from '../../components/Notice.astro';
+import CardGrid from '../../components/CardGrid.astro';
+import ResourceCard from '../../components/ResourceCard.astro';
+import { getPublished, getRelated, renderBody, type Resource } from '../../lib/content';
+import { promptCard, toolCard, toolCategoryPath } from '../../lib/cards';
+import { formatDate, isoDate } from '../../lib/format';
+import { FREE_PLAN_LABELS, TOOL_CATEGORY_LABELS, type ToolCategory } from '../../lib/taxonomy';
+
+export const getStaticPaths = (async () => {
+  const tools = await getPublished('tools');
+  return tools.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: Resource<'tools'> };
+const d = entry.data;
+if (!d.lastVerifiedAt || d.accountRequired === undefined) {
+  throw new Error(`Tool "${entry.id}" is missing lastVerifiedAt or accountRequired.`);
+}
+
+const Content = await renderBody(entry);
+const related = await getRelated('tools', entry, 3);
+const categoryLabel = TOOL_CATEGORY_LABELS[d.category];
+const officialHost = new URL(d.officialUrl).hostname.replace(/^www\./, '');
+
+// Suggest prompts written for this kind of tool ("Any chat assistant", "Any image generation tool").
+const promptMatch: Partial<Record<ToolCategory, RegExp>> = {
+  'chat-assistant': /chat assistant/i,
+  writing: /chat assistant/i,
+  image: /image generation/i,
+  design: /image generation/i,
+};
+const pattern = promptMatch[d.category];
+const prompts = pattern
+  ? (await getPublished('prompts'))
+      .filter((p) => pattern.test(p.data.intendedTool ?? ''))
+      .slice(0, 3)
+  : [];
+---
+
+<BaseLayout title={d.name} description={d.description} type="article">
+  <PageHeader
+    title={d.name}
+    intro={d.description}
+    breadcrumbs={[
+      { label: 'AI Tools Directory', href: '/tools' },
+      { label: categoryLabel, href: toolCategoryPath(d.category) },
+      { label: d.name },
+    ]}
+  >
+    <div class="badges">
+      <Badge variant="tool">AI tool</Badge>
+      <Badge variant="external">External tool</Badge>
+    </div>
+  </PageHeader>
+
+  <div class="container page-section detail">
+    <div class="detail__main">
+      {d.useCases.length > 0 && (
+        <section aria-labelledby="uses-heading">
+          <h2 id="uses-heading">Good for</h2>
+          <ul class="uses">
+            {d.useCases.map((use) => (
+              <li>{use}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    <aside class="detail__side" aria-labelledby="plan-heading">
+      <h2 id="plan-heading" class="side-title">
+        Free plan
+      </h2>
+      <p class="plan-status">
+        <span class={`plan plan--${d.freePlanStatus}`}>{FREE_PLAN_LABELS[d.freePlanStatus]}</span>
+      </p>
+      {d.freePlanNotes && <p class="plan-notes">{d.freePlanNotes}</p>}
+      <MetaList
+        items={[
+          { label: 'Made by', value: d.provider ?? officialHost },
+          { label: 'Category', value: categoryLabel, href: toolCategoryPath(d.category) },
+          { label: 'Account', value: d.accountRequired ? 'Free sign-up needed' : 'Not needed' },
+          { label: 'Last checked', value: formatDate(d.lastVerifiedAt) },
+        ]}
+      />
+      <Notice variant="warning">
+        <p>
+          Plans and limits change often. We last checked the official website on{' '}
+          <time datetime={isoDate(d.lastVerifiedAt)}>{formatDate(d.lastVerifiedAt)}</time>. Check it
+          again before you rely on a feature.
+        </p>
+      </Notice>
+      <a class="button official" href={d.officialUrl} target="_blank" rel="noopener noreferrer">
+        Visit {officialHost}
+        <span class="visually-hidden"> (official website, opens in a new tab)</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </aside>
+  </div>
+
+  {prompts.length > 0 && (
+    <section class="container page-section" aria-labelledby="prompts-heading">
+      <h2 id="prompts-heading">Prompts to try with {d.name}</h2>
+      <CardGrid label={`Prompts to try with ${d.name}`}>
+        {prompts.map((p) => (
+          <li>
+            <ResourceCard {...promptCard(p)} />
+          </li>
+        ))}
+      </CardGrid>
+    </section>
+  )}
+
+  {related.length > 0 && (
+    <section class="container page-section" aria-labelledby="related-heading">
+      <h2 id="related-heading">Similar tools</h2>
+      <CardGrid label="Similar tools">
+        {related.map((t) => (
+          <li>
+            <ResourceCard {...toolCard(t)} />
+          </li>
+        ))}
+      </CardGrid>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+  .detail {
+    display: grid;
+    gap: var(--space-6);
+    align-items: start;
+  }
+  @media (min-width: 60rem) {
+    .detail {
+      grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+    }
+  }
+  .detail__main {
+    display: grid;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+  .detail__main h2 {
+    font-size: var(--text-xl);
+  }
+  .uses {
+    margin: 0;
+    padding-left: var(--space-5);
+  }
+  .uses li + li {
+    margin-top: var(--space-2);
+  }
+  .detail__side {
+    display: grid;
+    gap: var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+  }
+  .side-title {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+  .plan-status,
+  .plan-notes {
+    margin: 0;
+  }
+  .plan-notes {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .plan {
+    display: inline-block;
+    font-weight: 700;
+    padding: var(--space-1) var(--space-3);
+    border-radius: 999px;
+    background: var(--surface-muted);
+  }
+  .plan--free {
+    background: var(--success-bg);
+    color: var(--success-text);
+  }
+  .plan--limited-free,
+  .plan--trial {
+    background: var(--accent-soft);
+    color: #6b3708;
+  }
+  .official {
+    justify-content: center;
+  }
+</style>

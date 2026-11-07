@@ -11,7 +11,7 @@ This is an independent project. It does not share code with the main jaingenius.
 | Phase                   | State                        |
 | ----------------------- | ---------------------------- |
 | 0 — Project foundation  | Done                         |
-| 1 — Public Resource Hub | In progress (M1.1–M1.4 done) |
+| 1 — Public Resource Hub | In progress (M1.1–M1.5 done) |
 | 2+ — CMS, builders, AI  | Not started                  |
 
 ## Requirements

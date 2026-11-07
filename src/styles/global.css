@@ -162,10 +162,15 @@ video {
   max-width: 68ch;
 }
 .prose h2 {
+  font-size: var(--text-xl);
   margin-top: var(--space-6);
 }
 .prose h3 {
+  font-size: var(--text-lg);
   margin-top: var(--space-5);
+}
+.prose > :first-child {
+  margin-top: 0;
 }
 .prose ul,
 .prose ol {

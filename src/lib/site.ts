@@ -25,6 +25,7 @@ export const NAV: NavItem[] = [
   { label: 'Prompts', href: '/prompts', group: 'explore' },
   { label: 'Templates', href: '/templates', group: 'explore' },
   { label: 'Assets', href: '/assets', group: 'explore' },
+  { label: 'AI Tools', href: '/tools', group: 'explore' },
 ];
 
 /**

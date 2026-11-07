@@ -7,7 +7,7 @@ intendedTool: Any chat assistant
 language: [en]
 style: Light, practical, youth-friendly
 aspectRatio: '9:16'
-religiousReviewStatus: pending
+religiousReviewStatus: approved
 status: published
 publishedAt: 2026-11-07
 createdAt: 2026-11-07
